@@ -2,23 +2,27 @@
 <html>
   <head>
     <meta charset="UTF-8">
-
     <title> Bazaar Flipper </title>
-    <center><h1>Bazaar Flipper</h1></center>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-      {box-sizing: border-box}
-      
-      head {
-        font-size: 70px;
-        font-family: 'Courier New', monospace;
-        font-weight: bold; 
+      html, body {
+        height: 100%;
+        margin: 0;
       }
       
       body {
         font-family: 'Courier New', monospace;
         text-align: center;
         font-size: 20px;
+        background-image: radial-gradient(#00ff38, #007f1c);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+      }
+      
+      h1 {
+        font-size: 70px;
+        font-family: 'Courier New', monospace;
+        font-weight: bold; 
       }
       
       .tablink {
@@ -55,8 +59,8 @@
         clear: both;
       }
       
-      .colour{
-       color: red;
+      .colour {
+        color: red;
       }
       
       .color {
@@ -70,34 +74,35 @@
     </style>
   </head>
   <body>
+    <h1>Bazaar Flipper</h1>
 
-  <button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button>
+    <button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button>
 
-  <div id = "Yeah" class = "tabcontent">
-    <center><br><br><br>
-    <div style = "display:inline-block;vertical-align:middle;">
+    <div id = "Yeah" class = "tabcontent">
+      <center><br><br><br>
+      <div style = "display:inline-block;vertical-align:middle;">
+      </div>
+      <div style = "display:inline-block;">
+        <p>
+          L bozo can't get text to work
+        </p>
+      </div>
+      </center>
     </div>
-    <div style = "display:inline-block;">
-      <p>
-        L bozo can't get text to work
-      </p>
-    </div>
-    </center>
-  </div>
 
     <script>
         function openPage(pageName,elmnt,color) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablink");
-        for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].style.backgroundColor = "";
-        }
-        document.getElementById(pageName).style.display = "block";
-        elmnt.style.backgroundColor = background-image: radial-gradient(#00ff38, #007f1c) !important;;
+          var i, tabcontent, tablinks;
+          tabcontent = document.getElementsByClassName("tabcontent");
+          for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+          }
+          tablinks = document.getElementsByClassName("tablink");
+          for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].style.backgroundColor = "";
+          }
+          document.getElementById(pageName).style.display = "block";
+          elmnt.style.backgroundColor = color;
         }
 
       document.getElementById("defaultOpen").click();
