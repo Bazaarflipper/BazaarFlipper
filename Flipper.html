@@ -2,69 +2,69 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    
+
     <title> Bazaar Flipper </title>
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <style>
-      {box-sizing: border-box}
-    
-        body, html {
-        height: 100%;
-        margin: 0;
-        font-family: Calibri, sans-serif;
-        }
-    
-        .tablink {
-        background-color: #555;
-        color: white;
+      body {
+        font-family: 'Courier New', monospace;
+        background-image: radial-gradient(#00ff38, #007f1c) !important;
+        text-align: center;
+      }
+      
+      .tablink {
+        border-radius: 50px;
         float: left;
+        font-family: 'Ika Compact VAR', fantasy;
+        font-size: 20px;
         border: none;
-        outline: none;
-        cursor: pointer;
         padding: 14px 16px;
-        font-size: 17px;
-        width: 25%;
-        }
-    
-        .tablink:hover {
-        background-color: #777;
-        }
-    
-        .tabcontent {
+        color: black;
+        width: 20%;
+        background-image: linear-gradient(45deg, #3a85ea, #8e1cff)
+      }
+      
+      .tablink:hover {
+        background-color: #7411ff;
+      }
+
+      .tabcontent {
         color: black;
         display: none;
         padding: 100px 20px;
         height: 100%;
-        }
-        .column {
-            float: left;
-            width: 33.33%;
-        }
-        .row:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .colour{
-            color: red;
-        }
-        .color {
-            color: blue;
-        }
-        .colorr {
-          color: #0;
-        }
-        
-      #Yeah {background-color: #ffffff;}
+      }
+      
+      .column {
+        float: left;
+        width: 33.33%;
+      }
+      
+      .row:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+      
+      .colour{
+        color: red;
+      }
+      
+      .color {
+        color: blue;
+      }
+      
+      .colorr {
+        color: #0;
+      }
       
     </style>
   </head>
   <body>
-  
-  <button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Yeah</button>
-  
+
+  <button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button>
+
   <div id = "Yeah" class = "tabcontent">
     <center><h1>Bazaar Flipper</h1></center>
     <center><br><br><br>
@@ -72,12 +72,12 @@
     </div>
     <div style = "display:inline-block;">
       <p>
-        Test Text unworking for some reason pls help me
+        L bozo can't get text to work
       </p>
     </div>
     </center>
   </div>
-  
+
     <script>
         function openPage(pageName,elmnt,color) {
         var i, tabcontent, tablinks;
@@ -92,7 +92,7 @@
         document.getElementById(pageName).style.display = "block";
         elmnt.style.backgroundColor = color;
         }
-  
+
       document.getElementById("defaultOpen").click();
     </script>
   </body>
