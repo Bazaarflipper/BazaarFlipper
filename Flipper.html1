@@ -85,8 +85,8 @@
   <pre id="typing-text"></pre>
 
   <script>
-    const strings = ["Flipping.", "Price drops", "Price rises"];
-    const colors = [#E7C01E, #1EE7C5, #EA2B62"];
+    const strings = ["Flipping.", "Price drops.", "Price rises."];
+    const colors = ["#E7C01E", "#1EE7C5", "#EA2B62"];
     const typingText = document.getElementById("typing-text");
     let currentIndex = 0;
     let currentString = strings[currentIndex];
