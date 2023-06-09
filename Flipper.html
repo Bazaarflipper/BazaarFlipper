@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Bazaar Flipper</title>
+    <title>Bazaar Flipper!</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       html, body {
@@ -92,7 +92,7 @@
     let currentString = strings[currentIndex];
     let currentColor = colors[currentIndex];
     let isDeleting = false;
-    let typingSpeed = 150;
+    let typingSpeed = 75;
     let typedText = '';
 
     function typeWriter() {
@@ -116,7 +116,7 @@
         currentIndex = (currentIndex + 1) % strings.length;
         currentString = strings[currentIndex];
         currentColor = colors[currentIndex];
-        typingSpeed = 0; // Delay before starting to type the next string
+        typingSpeed = 75; // Delay before starting to type the next string
       }
 
       setTimeout(typeWriter, typingSpeed);
