@@ -82,42 +82,48 @@
     
     <div id="Yeah" class="tabcontent">
     </div>
+  <pre id="typing-text"></pre>
 
-    <script>
-      const strings = ["Flipping", "Price rises", "Price drops"];
-      const colors = ["red", "blue", "green"];
-      const typingText = document.getElementById("typing-text");
-      let currentIndex = 0;
-      let currentString = strings[currentIndex];
-      let currentColor = colors[currentIndex];
-      let isDeleting = false;
-      let typingSpeed = 100;
+  <script>
+    const strings = ["This is the first string.", "This is the second string.", "This is the third string."];
+    const colors = ["red", "blue", "green"];
+    const typingText = document.getElementById("typing-text");
+    let currentIndex = 0;
+    let currentString = strings[currentIndex];
+    let currentColor = colors[currentIndex];
+    let isDeleting = false;
+    let typingSpeed = 100;
+    let typedText = '';
 
-      function typeWriter() {
-        const currentText = typingText.innerHTML;
-        const textLength = currentText.length;
+    function typeWriter() {
+      const textLength = typedText.length;
 
-        if (!isDeleting && textLength < currentString.length) {
-          typingText.innerHTML = `<span style="color: ${currentColor}">${currentString.substring(0, textLength + 1)}</span>`;
-        } else if (isDeleting && textLength > 0) {
-          typingText.innerHTML = `<span style="color: ${currentColor}">${currentString.substring(0, textLength - 1)}</span>`;
-        }
-
-        if (!isDeleting && textLength === currentString.length) {
-          isDeleting = true;
-          typingSpeed = 200;
-        } else if (isDeleting && textLength === 0) {
-          isDeleting = false;
-          currentIndex = (currentIndex + 1) % strings.length;
-          currentString = strings[currentIndex];
-          currentColor = colors[currentIndex];
-          typingSpeed = 100;
-        }
-
-        setTimeout(typeWriter, typingSpeed);
+      if (!isDeleting && textLength < currentString.length) {
+        typedText = currentString.substring(0, textLength + 1);
+      } else if (isDeleting && textLength > 0) {
+        typedText = currentString.substring(0, textLength - 1);
       }
 
-      typeWriter();
-    </script>
+      typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}</span>`;
+
+      if (!isDeleting && textLength === currentString.length) {
+        isDeleting = true;
+        typingSpeed = 200; // Delay before starting to delete the text
+      }
+
+      if (isDeleting && textLength === 0) {
+        isDeleting = false;
+        currentIndex = (currentIndex + 1) % strings.length;
+        currentString = strings[currentIndex];
+        currentColor = colors[currentIndex];
+        typingSpeed = 100; // Delay before starting to type the next string
+      }
+
+      setTimeout(typeWriter, typingSpeed);
+    }
+
+    typeWriter();
+  </script>
+
   </body>
 </html>
