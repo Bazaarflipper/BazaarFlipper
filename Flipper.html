@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Bazaar Flipper</title>
+    <title>Bazaar Flippe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       html, body {
@@ -85,6 +85,9 @@
   <pre id="typing-text"></pre>
 
   <script>
+    function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
     const strings = ["Flipping.", "Price drops.", "Price rises."];
     const colors = ["#E7C01E", "#49A1F3", "#B62BEA"];
     const typingText = document.getElementById("typing-text");
@@ -109,6 +112,7 @@
       if (!isDeleting && textLength === currentString.length) {
         isDeleting = true;
         typingSpeed = 100; // Delay before starting to delete the text
+        await sleep(500)
       }
 
       if (isDeleting && textLength === 0) {
