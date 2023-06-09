@@ -78,7 +78,47 @@
     </style>
   </head>
   <body>
-    <h1>Bazaar Flipper</h1>
+    <h1>
+    "Best tracker for"
+    <br>
+    <pre id="typing-text"></pre>
+    <script>
+      const strings = ["flipping", "price rises", "price drops"];
+      const colors = ["red", "blue", "green"];
+      const typingText = document.getElementById("typing-text");
+      let currentIndex = 0;
+      let currentString = strings[currentIndex];
+      let currentColor = colors[currentIndex];
+      let isDeleting = false;
+      let typingSpeed = 100;
+
+      function typeWriter() {
+        const currentText = typingText.innerHTML;
+        const textLength = currentText.length;
+
+        if (!isDeleting && textLength < currentString.length) {
+          typingText.innerHTML = `<span style="color: ${currentColor}">${currentString.substring(0, textLength + 1)}</span>`;
+        } else if (isDeleting && textLength > 0) {
+          typingText.innerHTML = `<span style="color: ${currentColor}">${currentString.substring(0, textLength - 1)}</span>`;
+        }
+
+        if (!isDeleting && textLength === currentString.length) {
+          isDeleting = true;
+          typingSpeed = 200; // Delay before starting to delete the text
+        } else if (isDeleting && textLength === 0) {
+          isDeleting = false;
+          currentIndex = (currentIndex + 1) % strings.length;
+          currentString = strings[currentIndex];
+          currentColor = colors[currentIndex];
+          typingSpeed = 100; // Delay before starting to type the next string
+        }
+
+        setTimeout(typeWriter, typingSpeed);
+      }
+
+      typeWriter();
+  </script>
+    </h1>
 
     <pre><button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button></pre>
 
@@ -170,9 +210,6 @@
     </style>
   </head>
   <body>
-    <h1>Best tracker for <br> 
-    <span class="typer" id="main" data-words="flipping,price drops,price rises" data-colors="#F47FFF,#7289DA" data-delay="100" data-deletedelay="1500" style="color: rgb(114, 137, 218);"></span>
-    </h1>
 
 
     <pre><button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button></pre>
