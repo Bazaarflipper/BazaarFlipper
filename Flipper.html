@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-  </head>
-   <title> Bazaar Flip </title>
+    <title>Bazaar Flip</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       html, body {
@@ -71,13 +70,19 @@
       .colorr {
         color: #000000;
       }
-
     </style>
   </head>
   <body>
     <h1>
-    Best tracker for
-    <pre id="typing-text"></pre>
+      Best tracker for
+      <span id="typing-text"></span>
+    </h1>
+
+    <button class="tablink" id="defaultOpen">Price Drops</button>
+    
+    <div id="Yeah" class="tabcontent">
+    </div>
+
     <script>
       const strings = ["Flipping", "Price rises", "Price drops"];
       const colors = ["red", "blue", "green"];
@@ -100,124 +105,19 @@
 
         if (!isDeleting && textLength === currentString.length) {
           isDeleting = true;
-          typingSpeed = 200; // Delay before starting to delete the text
+          typingSpeed = 200;
         } else if (isDeleting && textLength === 0) {
           isDeleting = false;
           currentIndex = (currentIndex + 1) % strings.length;
           currentString = strings[currentIndex];
           currentColor = colors[currentIndex];
-          typingSpeed = 100; // Delay before starting to type the next string
+          typingSpeed = 100;
         }
 
         setTimeout(typeWriter, typingSpeed);
       }
 
       typeWriter();
-  </script>
-    </h1>
-
-    <pre><button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button></pre>
-
-    <div id = "Yeah" class = "tabcontent">
-      <center><br><br><br>
-      <div style = "display:inline-block;vertical-align:middle;">
-      </div>
-      <div style = "display:inline-block;">
-        <py-script>
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-    <meta charset="UTF-8">
-    <title> Bazaar Flipper </title>
-    <?PHP
-    echo shell_exec("python test.py 'parameter1'");
-    ?>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-      }
-      
-      body {
-        font-family: 'Courier New', monospace;
-        text-align: center;
-        font-size: 20px;
-        background-image: radial-gradient(#00ff38, #007f1c);
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-      }
-      
-      h1 {
-        font-size: 70px;
-        font-family: 'Courier New', monospace;
-        font-weight: bold; 
-      }
-      
-      .tablink {
-        border-radius: 50px;
-        float: left;
-        font-family: 'Ika Compact VAR', fantasy;
-        font-size: 20px;
-        border: none;
-        padding: 14px 16px;
-        color: black;
-        width: 20%;
-        margin-left: 10px;
-        background-image: linear-gradient(45deg, #3a85ea, #8e1cff)
-      }
-      
-      .tablink:hover {
-        background-color: #7411ff;
-      }
-
-      .tabcontent {
-        color: black;
-        display: none;
-        padding: 100px 20px;
-        height: 100%;
-      }
-      
-      .column {
-        float: left;
-        width: 33.33%;
-      }
-      
-      .row:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-      
-      .colour {
-        color: red;
-      }
-      
-      .color {
-        color: blue;
-      }
-      
-      .colorr {
-        color: #000000;
-      }
-
-    </style>
-  </head>
-  <body>
-
-
-    <pre><button class = "tablink" onclick = "openPage('Yeah', this, 'gray')" id = "defaultOpen">Price Drops</button></pre>
-
-    <div id = "Yeah" class = "tabcontent">
-      <center><br><br><br>
-      <div style = "display:inline-block;vertical-align:middle;">
-      </div>
-      <div style = "display:inline-block;">
-    </script>
-  </body>
-</html>
     </script>
   </body>
 </html>
