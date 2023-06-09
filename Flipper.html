@@ -112,7 +112,7 @@
       if (!isDeleting && textLength === currentString.length) {
         isDeleting = true;
         typingSpeed = 100; // Delay before starting to delete the text
-        await sleep(500)
+        await sleep(500);
       }
 
       if (isDeleting && textLength === 0) {
