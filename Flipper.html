@@ -278,9 +278,7 @@
 
       } catch (error) {
         console.error("An error occurred during fetching the data: ", error);
-      }
-    }
-      for (let item of price_drop_list) {
+  for (let item of price_drop_list) {
         let drop_div = document.getElementById('priceDropsDiv');
         let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
         drop_div.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has dropped by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
@@ -292,6 +290,7 @@
         rise_div.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has risen by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
       }
     }
+
 
 
     setInterval(fetchData, 5000); // refresh every 5 seconds
