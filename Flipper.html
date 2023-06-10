@@ -85,189 +85,157 @@
   <button class="tablink" onclick="openTab('More')">More</button>
 
   <div id="Price Drops" class="tabcontent">
-    <script>
-let old_prices_sell = {};
-let old_prices_buy = {};
-let price_drop_list = [];
-
-async function fetchBazaarData(api_key) {
-    const base_url = 'https://api.hypixel.net';
-    const endpoint = '/skyblock/bazaar';
-    const params = {
-        'key': api_key,
-    };
-    const response = await fetch(base_url + endpoint + '?key=' + params.key);
-    const data = await response.json();
-    return data;
-}
-
-let api_key = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'; // replace with your API key
-let price_drop_threshold = 0.2; // e.g., 20% drop in price
-
-setInterval(async () => {
-    const bazaar_data = await fetchBazaarData(api_key);
-    for (let product_id in bazaar_data['products']) {
-        const product_data = bazaar_data['products'][product_id];
-        if (!product_data['sell_summary'].length || !product_data['buy_summary'].length)
-            continue;
-
-        let sell_price = product_data['sell_summary'][0]['pricePerUnit'];
-        let buy_price = product_data['buy_summary'][0]['pricePerUnit'];
-
-        let old_price_sell = old_prices_sell[product_id];
-        let old_price_buy = old_prices_buy[product_id];
-
-        if (old_price_sell && old_price_buy && buy_price && sell_price) {
-            if (old_price_sell && sell_price < old_price_sell * (1 - price_drop_threshold) && !price_drop_list.some(e => e[0] === product_id)) {
-                let percent = Math.round(100 * (sell_price / old_price_sell));
-                console.log(`The sell price of ${product_id} has dropped significantly with a sell and buy price of $${sell_price} and $${buy_price}. The percent change was ${percent}% of the previous price.`);
-                price_drop_list.push([product_id, old_price_sell]);
-            }
-
-            // Update old prices
-            old_prices_sell[product_id] = sell_price;
-            old_prices_buy[product_id] = buy_price;
-        }
-    }
-}, 100); // Interval is set to 1 minute
-
-    </script>
+    <p id="priceDrops"></p>
   </div>
 
   <div id="Price Rises" class="tabcontent">
-    <script>
-let price_rise_threshold = 0.2; // e.g., 20% rise in price
+    <p id="priceRises"></p>
+  </div>
 
-setInterval(async () => {
-    const bazaar_data = await fetchBazaarData(api_key);
-    for (let product_id in bazaar_data['products']) {
-        const product_data = bazaar_data['products'][product_id];
-        if (!product_data['sell_summary'].length || !product_data['buy_summary'].length)
-            continue;
+  <div id="New Flips" class="tabcontent">
+    <p id="hotNewFlips"></p>
+  </div>
 
-        let sell_price = product_data['sell_summary'][0]['pricePerUnit'];
-        let buy_price = product_data['buy_summary'][0]['pricePerUnit'];
-
-        let old_price_sell = old_prices_sell[product_id];
-        let old_price_buy = old_prices_buy[product_id];
-
-        if (old_price_sell && old_price_buy && buy_price && sell_price) {
-            if (old_price_buy && buy_price > old_price_buy * (1 + price_rise_threshold)) {
-                let percent = Math.round(100 * (buy_price / old_price_buy)) - 1;
-                console.log(`The buy price of ${product_id} has skyrocketed with a sell and buy price of $${sell_price} and $${buy_price}. The percent change was ${percent}% from the previous price.`);
-            }
-
-            // Update old prices
-            old_prices_sell[product_id] = sell_price;
-            old_prices_buy[product_id] = buy_price;
-        }
+  <div id="Best Flips" class="tabcontent">
+      <p id="flips"></p>
+  </div>
+  <script>
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
     }
-}, 100); // Interval is set to 1 minute
 
-    </script>
-  </div>
+    const strings = ["Price Drops", "Price Rises", "Flipping", "More"];
+    const typingDelay = 200;
+    const erasingDelay = 100;
+    const newTextDelay = 2000; // Delay between current and next text
+    let textArrayIndex = 0;
+    let charIndex = 0;
 
-  <div id="Flipping" class="tabcontent">
-    <script>
-let margin_change_threshold = 0.2;
-
-setInterval(async () => {
-    const bazaar_data = await fetchBazaarData(api_key);
-    for (let product_id in bazaar_data['products']) {
-        const product_data = bazaar_data['products'][product_id];
-        if (!product_data['sell_summary'].length || !product_data['buy_summary'].length)
-            continue;
-
-        let sell_price = product_data['sell_summary'][0]['pricePerUnit'];
-        let buy_price = product_data['buy_summary'][0]['pricePerUnit'];
-        let ratio = Math.round(buy_price - sell_price, 1);
-
-        let old_price_sell = old_prices_sell[product_id];
-        let old_price_buy = old_prices_buy[product_id];
-
-        if (old_price_sell && old_price_buy && buy_price && sell_price) {
-            if (buy_price / sell_price > old_price_buy / old_price_sell && (buy_price / sell_price) / (old_price_buy / old_price_sell) > 1 + margin_change_threshold) {
-                let percent = Math.round(100 * ((buy_price / sell_price) / (old_price_buy / old_price_sell))) - 1;
-                console.log(`The bazaar flipping margin for ${product_id} has increased by ${percent}%. The flipping margin is ${Math.round(buy_price / sell_price, 3)}X with an item cost of $${sell_price}.`);
-            }
-
-            for (let [dropped_product_id, original_price] of price_drop_list) {
-                let current_product_data = bazaar_data['products'][dropped_product_id];
-                if (current_product_data && current_product_data['sell_summary'].length && current_product_data['sell_summary'][0]['pricePerUnit'] >= original_price) {
-                    console.log(`The sell price of ${dropped_product_id} has returned to its normal price of ${original_price}.`);
-                    price_drop_list = price_drop_list.filter(e => e[0] !== dropped_product_id);
-                }
-            }
-
-            // Update old prices
-            old_prices_sell[product_id] = sell_price;
-            old_prices_buy[product_id] = buy_price;
-        }
+    function type() {
+      if (charIndex < strings[textArrayIndex].length) {
+        if(!cursor.classList.contains("typing")) cursor.classList.add("typing");
+        document.getElementById("typing-text").textContent += strings[textArrayIndex].charAt(charIndex);
+        charIndex++;
+        setTimeout(type, typingDelay);
+      } 
+      else {
+        cursor.classList.remove("typing");
+        setTimeout(erase, newTextDelay);
+      }
     }
-}, 100); // Interval is set to 1 minute
 
-    </script>
-  </div>
+    function erase() {
+      if (charIndex > 0) {
+        if(!cursor.classList.contains("typing")) cursor.classList.add("typing");
+        document.getElementById("typing-text").textContent = strings[textArrayIndex].substring(0, charIndex-1);
+        charIndex--;
+        setTimeout(erase, erasingDelay);
+      } 
+      else {
+        cursor.classList.remove("typing");
+        textArrayIndex++;
+        if(textArrayIndex>=strings.length) textArrayIndex=0;
+        setTimeout(type, typingDelay + 1100);
+      }
+    }
 
-  <div id="More" class="tabcontent">
-    <script>
-      // Other JavaScript goes here
-    </script>
-  </div>
+    document.addEventListener("DOMContentLoaded", function() { 
+      if(strings.length) setTimeout(type, newTextDelay + 250);
+    });
+
+    function openTab(tabName) {
+      let i, x, tablinks;
+      x = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < x.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " w3-red";
+    }
+
+    document.getElementById("defaultOpen").click();
+  </script>
+   <script>
+    const apiKey = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'; // Replace with your API key
+    const priceDropThreshold = 0.2;  // e.g., 20% drop in price
+    const priceRiseThreshold = 0.2;  // e.g., 20% rise in price
+    const marginChangeThreshold = 0.2;
+
+    let oldPricesSell = {};
+    let oldPricesBuy = {};
+    let priceDropList = [];
+
+    async function getBazaarData(apiKey) {
+      const base_url = 'https://api.hypixel.net';
+      const endpoint = '/skyblock/bazaar';
+      let response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
+      let data = await response.json();
+      return data;
+    }
+
+    function updateDisplay(id, text) {
+      document.getElementById(id).innerHTML += text + "<br>";
+    }
+
+    async function monitorBazaar() {
+      const bazaarData = await getBazaarData(apiKey);
+      if (bazaarData === null) {
+        return;
+      }
+
+      for (let product_id in bazaarData['products']) {
+        const productData = bazaarData['products'][product_id];
+        if (!productData['sell_summary'] || !productData['buy_summary']) {
+            continue;
+        }
+
+        const sellPrice = productData['sell_summary'][0]['pricePerUnit'];
+        const buyPrice = productData['buy_summary'][0]['pricePerUnit'];
+
+        let oldPriceSell = oldPricesSell[product_id];
+        let oldPriceBuy = oldPricesBuy[product_id];
+
+        if (oldPriceSell && sellPrice < oldPriceSell * (1 - priceDropThreshold)) {
+          const percent = Math.round(100 * (sellPrice / oldPriceSell));
+          updateDisplay("priceDrops", `The sell price of ${product_id} has dropped significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price decreased by ${percent}%.`);
+        }
+        
+        if (oldPriceBuy && buyPrice > oldPriceBuy * (1 + priceRiseThreshold)) {
+          const percent = Math.round(100 * (buyPrice / oldPriceBuy));
+          updateDisplay("priceRises", `The buy price of ${product_id} has increased significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price increased by ${percent}%.`);
+        }
+        
+        if (oldPriceSell && oldPriceBuy && Math.abs(sellPrice - buyPrice) > oldPriceSell * marginChangeThreshold) {
+          const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
+          updateDisplay("hotNewFlips", `The difference between the sell and buy prices of ${product_id} has changed significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The margin changed by ${percent}%.`);
+        }
+
+        oldPricesSell[product_id] = sellPrice;
+        oldPricesBuy[product_id] = buyPrice;
+      }
+    }
+
+    setInterval(monitorBazaar, 100);
+  </script>
 
   <script>
-       function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    function openTab(tabName) {
+      var i, x, tablinks;
+      x = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
       }
-
-      const strings = ["Flipping.", "Price drops.", "Price rises."];
-      const colors = ["#E7C01E", "#3CCEFD", "#B62BEA"];
-      const typingText = document.getElementById("typing-text");
-      let currentIndex = 0;
-      let currentString = strings[currentIndex];
-      let currentColor = colors[currentIndex];
-      let isDeleting = false;
-      let typingSpeed = 100;
-      let typedText = '';
-
-      async function typeWriter() {
-        const textLength = typedText.length;
-
-        if (!isDeleting && textLength < currentString.length) {
-          typedText = currentString.substring(0, textLength + 1);
-        } else if (isDeleting && textLength > 0) {
-          typedText = currentString.substring(0, textLength - 1);
-        }
-
-        typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}<span class="cursor"></span></span>`;
-
-        if (!isDeleting && textLength === currentString.length) {
-          isDeleting = true;
-          typingSpeed = 100; // Delay before starting to delete the text
-          await sleep(500);
-        }
-
-        if (isDeleting && textLength === 0) {
-          isDeleting = false;
-          currentIndex = (currentIndex + 1) % strings.length;
-          currentString = strings[currentIndex];
-          currentColor = colors[currentIndex];
-          typingSpeed = 100; // Delay before starting to type the next string
-          await sleep(500);
-        }
-
-        setTimeout(typeWriter, typingSpeed);
-      }
-
-      sleep(1000).then(typeWriter);
-        function openTab(tabName) {
-      const tabcontents = document.getElementsByClassName("tabcontent");
-      for (let i = 0; i < tabcontents.length; i++) {
-        tabcontents[i].style.display = "none";
+      tablinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < x.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
       }
       document.getElementById(tabName).style.display = "block";
     }
-    
+
     document.getElementById("defaultOpen").click();
   </script>
 </body>
