@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -102,13 +102,25 @@
   <button class="tablink" onclick="openTab(event, 'BestFlips')">Best Flips</button>
 
   <div id="PriceDrops" class="tabcontent">
-    <p id="priceDrops"></p>
     <center><p> price drops go here</p></center>
+    <table id="drop_table">
+      <tr>
+        <th>Product</th>
+        <th>Old Price</th>
+        <th>New Price</th>
+      </tr>
+    </table> 
   </div>
 
   <div id="PriceRises" class="tabcontent">
-    <p id="priceRises"></p>
     <center><p> price rises go here</p></center>
+    <table id="rise_table">
+      <tr>
+        <th>Product</th>
+        <th>Old Price</th>
+        <th>New Price</th>
+      </tr>
+    </table>
   </div>
 
   <div id="NewFlips" class="tabcontent">
