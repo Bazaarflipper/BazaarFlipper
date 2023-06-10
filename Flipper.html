@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flipper/title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -13,7 +13,7 @@
       font-family: 'Courier New', monospace;
       text-align: center;
       font-size: 20px;
-      background-image: radial-gradient(circle, #00ff38, #007f1c);
+      background-image: repeating-radial-gradient(circle, #00ff38, #007f1c);
       background-size: 100% 100%;
       background-repeat: no-repeat;
     }
@@ -92,24 +92,24 @@
 <body>
   <h1>Best tracker for <span id="typing-text"></span></h1>
 
-  <button class="tablink" id="defaultOpen" onclick="openTab(event, 'Price Drops')">Price Drops</button>
-  <button class="tablink" onclick="openTab(event, 'Price Rises')">Price Rises</button>
-  <button class="tablink" onclick="openTab(event, 'New Flips')">New Flips</button>
-  <button class="tablink" onclick="openTab(event, 'Best Flips')">Best Flips</button>
+  <button class="tablink" id="defaultOpen" onclick="openTab(event, 'PriceDrops')">Price Drops</button>
+  <button class="tablink" onclick="openTab(event, 'PriceRises')">Price Rises</button>
+  <button class="tablink" onclick="openTab(event, 'NewFlips')">New Flips</button>
+  <button class="tablink" onclick="openTab(event, 'BestFlips')">Best Flips</button>
 
-  <div id="Price Drops" class="tabcontent">
+  <div id="PriceDrops" class="tabcontent">
     <p id="priceDrops"></p>
   </div>
 
-  <div id="Price Rises" class="tabcontent">
+  <div id="PriceRises" class="tabcontent">
     <p id="priceRises"></p>
   </div>
 
-  <div id="New Flips" class="tabcontent">
+  <div id="NewFlips" class="tabcontent">
     <p id="newFlips"></p>
   </div>
 
-  <div id="Best Flips" class="tabcontent">
+  <div id="BestFlips" class="tabcontent">
     <p id="bestFlips"></p>
   </div>
   
@@ -159,7 +159,7 @@
 
     sleep(1000).then(typeWriter);
 
-    const apiKey = 'ae795182-7862-4591-a436-b93a65e43b42'; // Replace with your API key
+    const apiKey = 'de9f4b3f-5904-4eec-a42e-c4cedcb357ba'; // Replace with your actual API key from Hypixel
     const priceDropThreshold = 0.2;
     const priceRiseThreshold = 0.2;
     const marginChangeThreshold = 0.2;
@@ -168,10 +168,10 @@
     let oldPricesBuy = {};
 
     const tabContentHistory = {
-      'Price Drops': '',
-      'Price Rises': '',
-      'New Flips': '',
-      'Best Flips': ''
+      'PriceDrops': '',
+      'PriceRises': '',
+      'NewFlips': '',
+      'BestFlips': ''
     };
 
     async function getBazaarData(apiKey) {
@@ -220,9 +220,9 @@
             const percent = Math.round(100 * (sellPrice / oldPriceSell - 1));
             const message = `The sell price of ${product_id} has dropped significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
 
-            if (!tabContentHistory['Price Drops'].includes(message)) {
-              updateDisplay('Price Drops', message);
-              tabContentHistory['Price Drops'] += message + '<br>';
+            if (!tabContentHistory['PriceDrops'].includes(message)) {
+              updateDisplay('PriceDrops', message);
+              tabContentHistory['PriceDrops'] += message + '<br>';
             }
           }
           
@@ -230,9 +230,9 @@
             const percent = Math.round(100 * (buyPrice / oldPriceBuy - 1));
             const message = `The buy price of ${product_id} has increased significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
 
-            if (!tabContentHistory['Price Rises'].includes(message)) {
-              updateDisplay('Price Rises', message);
-              tabContentHistory['Price Rises'] += message + '<br>';
+            if (!tabContentHistory['PriceRises'].includes(message)) {
+              updateDisplay('PriceRises', message);
+              tabContentHistory['PriceRises'] += message + '<br>';
             }
           }
           
@@ -240,9 +240,9 @@
             const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
             const message = `The difference between the sell and buy prices of ${product_id} has changed significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Margin Change: ${percent}%.`;
 
-            if (!tabContentHistory['New Flips'].includes(message)) {
-              updateDisplay('New Flips', message);
-              tabContentHistory['New Flips'] += message + '<br>';
+            if (!tabContentHistory['NewFlips'].includes(message)) {
+              updateDisplay('NewFlips', message);
+              tabContentHistory['NewFlips'] += message + '<br>';
             }
           }
 
