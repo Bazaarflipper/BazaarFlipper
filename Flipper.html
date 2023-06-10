@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -74,6 +74,8 @@
     @keyframes blink {
       50% { opacity: 0; }
     }
+    .tablink.active {
+  background-color: #7411ff; 
   </style>
 </head>
 <body>
@@ -233,15 +235,16 @@
       x[i].style.display = "none";
     }
     tablinks = document.getElementsByClassName("tablink");
-    for (i = 0; i < x.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " w3-red";
+    evt.currentTarget.className += " active";
   }
 
   document.getElementById("defaultOpen").click();
 </script>
+
 
 </body>
 </html>
