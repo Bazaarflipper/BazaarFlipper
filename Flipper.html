@@ -70,6 +70,19 @@
       .colorr {
         color: #000000;
       }
+
+      .cursor {
+        width: 3px;
+        height: 1em;
+        background: currentColor;
+        display: inline-block;
+        margin-left: 2px;
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        50% { opacity: 0; }
+      }
     </style>
   </head>
   <body>
@@ -82,7 +95,6 @@
     
     <div id="Yeah" class="tabcontent">
     </div>
-  <pre id="typing-text"></pre>
 
   <script>
       function sleep(ms) {
@@ -108,7 +120,7 @@
           typedText = currentString.substring(0, textLength - 1);
         }
 
-        typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}</span>`;
+        typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}<span class="cursor"></span></span>`;
 
         if (!isDeleting && textLength === currentString.length) {
           isDeleting = true;
