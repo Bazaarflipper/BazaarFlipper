@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -35,7 +35,10 @@
       margin: 5px;
       background-image: linear-gradient(45deg, #3a85ea, #A44EFF);
     }
-    
+    .tablink.active {
+    background-image: linear-gradient(45deg, #1f0247, #7411ff);
+    }
+
     .tablink:hover {
       background-image: linear-gradient(45deg, #1f0247, #7411ff);
     }
@@ -255,23 +258,29 @@
     }
 
     setInterval(monitorBazaar, 5000);
+  </script>
+  <script>
 
     function openTab(evt, tabName) {
-      const tabContent = document.getElementsByClassName("tabcontent");
-      for (let i = 0; i < tabContent.length; i++) {
+      var i, tabContent, tabLinks;
+
+      // Get all elements with class="tabcontent" and hide them
+      tabContent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabContent.length; i++) {
         tabContent[i].style.display = "none";
       }
 
-      const tabLinks = document.getElementsByClassName("tablink");
-      for (let i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].classList.remove("active");
+      // Get all elements with class="tablink" and remove the class "active"
+      tabLinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
       }
 
+      // Show the current tab, and add an "active" class to the link that opened the tab
       document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.classList.add("active");
+      evt.currentTarget.className += " active";
     }
 
-    document.getElementById("defaultOpen").click();
   </script>
 </body>
 </html>
