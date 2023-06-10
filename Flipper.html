@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -202,7 +202,7 @@
       return data;
     }
 
-    async function fetchData() {
+        async function fetchData() {
       try {
         let bazaar_data = await get_bazaar_data(api_key);
 
@@ -252,15 +252,12 @@
         old_prices_sell = new_prices_sell;
         old_prices_buy = new_prices_buy;
 
-        // Update the display
         let priceDropsDiv = document.getElementById('priceDropsDiv');
         let priceRisesDiv = document.getElementById('priceRisesDiv');
 
-        // Clear the divs
         priceDropsDiv.innerHTML = '';
         priceRisesDiv.innerHTML = '';
 
-        // Add new data to the divs
         for (let item of price_drop_list) {
           let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
           priceDropsDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has dropped by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
@@ -271,13 +268,21 @@
           priceRisesDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has risen by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
         }
 
+        // If there are any price changes, make sure the parent divs are visible
+        if (price_drop_list.length > 0) {
+          document.getElementById('PriceDrops').style.display = 'block';
+        }
+        if (price_rise_list.length > 0) {
+          document.getElementById('PriceRises').style.display = 'block';
+        }
+
       } catch (error) {
         console.error("An error occurred during fetching the data: ", error);
       }
     }
 
-    setInterval(fetchData, 5000); // refresh every 5 seconds
-
+    fetchData();
+    setInterval(fetchData, 500);
     // Initialize the tab
     document.getElementById("defaultOpen").click();
   </script>
