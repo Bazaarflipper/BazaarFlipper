@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -169,27 +169,118 @@
     }
     sleep(1000).then(typeWriter);
   </script>
+    <script>
+      // script for tab behaviour
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+
+      // script for fetching data
+      let api_key = '702f98df-b74f-4d4d-a9dc-f8b89ff850e4';
+      let price_drop_threshold = 0.2;
+      let price_rise_threshold = 0.2;
+      let margin_change_threshold = 0.2;
+      let old_prices_sell = {};
+      let old_prices_buy = {};
+      let price_drop_list = [];
+
+      async function get_bazaar_data(api_key) {
+        let base_url = 'https://api.hypixel.net';
+        let endpoint = '/skyblock/bazaar';
+        let headers = {
+          'Accept': 'application/json',
+        };
+        let params = new URLSearchParams({
+          'key': api_key
+        });
+        let response = await fetch(base_url + endpoint + '?' + params.toString(), {headers});
+        let data = await response.json();
+        return data;
+      }
+
+      async function fetchData() {
+        let bazaar_data = await get_bazaar_data(api_key);
+        
+        if (bazaar_data === null) {
+          return;
+        }
+
+        for (let product_id in bazaar_data['products']) {
+          let product_data = bazaar_data['products'][product_id];
+          
+          if (!product_data['sell_summary'] || !product_data['buy_summary']) {
+            continue;
+          }
+
+          let sell_price = product_data['sell_summary'][0]['pricePerUnit'];
+          let buy_price = product_data['buy_summary'][0]['pricePerUnit'];
+          
+          let old_price_sell = old_prices_sell[product_id];
+          let old_price_buy = old_prices_buy[product_id];
+          
+          if (old_price_sell && old_price_buy && buy_price && sell_price) {
+            if (sell_price < old_price_sell * (1 - price_drop_threshold) && !price_drop_list.some(i => i[0] === product_id)) {
+              let percent = parseInt((100 * (sell_price / old_price_sell)).toFixed(5)) - 1;
+              document.getElementById("priceDrops").innerHTML += `The sell price of ${product_id} has dropped by ${percent}%. It was previously $${old_price_sell}, but now it's $${sell_price}.<br/>`;
+              price_drop_list.push([product_id, old_price_sell]);
+            }
+            else if (sell_price > old_price_sell * (1 + price_rise_threshold)) {
+                let percent = parseInt((100 * (sell_price / old_price_sell)).toFixed(5)) - 1;
+                document.getElementById("priceRises").innerHTML += `The sell price of ${product_id} has increased by ${percent}%. It was previously $${old_price_sell}, but now it's $${sell_price}.<br/>`;
+            }
+            else if (buy_price / sell_price > old_price_buy / old_price_sell && (buy_price / sell_price) / (old_price_buy / old_price_sell) > 1 + margin_change_threshold) {
+                let percent = parseInt((100 * ((buy_price / sell_price) / (old_price_buy / old_price_sell))).toFixed(5)) - 1;
+                document.getElementById("newFlips").innerHTML += `The bazaar flipping margin for ${product_id} has increased by ${percent}%. The flipping margin is ${(buy_price / sell_price).toFixed(3)}X with an item cost of $${sell_price}.<br/>`;
+            }
+            
+            price_drop_list = price_drop_list.filter(([dropped_product_id, original_price]) => {
+                let current_product_data = bazaar_data['products'][dropped_product_id];
+                if (current_product_data && current_product_data['sell_summary'] && current_product_data['sell_summary'][0]['pricePerUnit'] >= original_price) {
+                    document.getElementById("priceDrops").innerHTML += `The sell price of ${dropped_product_id} has returned to its normal price of ${original_price}.<br/>`;
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        old_prices_sell[product_id] = sell_price;
+        old_prices_buy[product_id] = buy_price;
+      }
+      setTimeout(fetchData, 5000); // refresh every 5 seconds
+    </script>
   <script>
 
-    function openTab(evt, tabName) {
-      var i, tabContent, tabLinks;
+ function openTab(evt, tabName) {
+    var i, tabContent, tabLinks;
 
-      // Get all elements with class="tabcontent" and hide them
-      tabContent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabContent.length; i++) {
-        tabContent[i].style.display = "none";
-      }
-
-      // Get all elements with class="tablink" and remove the class "active"
-      tabLinks = document.getElementsByClassName("tablink");
-      for (i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
-      }
-
-      // Show the current tab, and add an "active" class to the link that opened the tab
-      document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.className += " active";
+    // Get all elements with class="tabcontent" and hide them
+    tabContent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabContent.length; i++) {
+      tabContent[i].style.display = "none";
     }
+
+    // Get all elements with class="tablink" and remove the class "active"
+    tabLinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < tabLinks.length; i++) {
+      tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+    }
+
+    // Show the current tab, and add an "active" class to the link that opened the tab
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
+  document.getElementById("defaultOpen").click();
 
   </script>
 </body>
