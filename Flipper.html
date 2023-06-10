@@ -79,10 +79,11 @@
 <body>
   <h1>Best tracker for <span id="typing-text"></span></h1>
 
-  <button class="tablink" id="defaultOpen" onclick="openTab('Price Drops')">Price Drops</button>
-  <button class="tablink" onclick="openTab('Price Rises')">Price Rises</button>
-  <button class="tablink" onclick="openTab('Flipping')">Flipping</button>
-  <button class="tablink" onclick="openTab('More')">More</button>
+  <button class="tablink" id="defaultOpen" onclick="openTab(event, 'Price Drops')">Price Drops</button>
+  <button class="tablink" onclick="openTab(event, 'Price Rises')">Price Rises</button>
+  <button class="tablink" onclick="openTab(event, 'New Flips')">New Flips</button>
+  <button class="tablink" onclick="openTab(event, 'Best Flips')">Best Flips</button>
+
 
   <div id="Price Drops" class="tabcontent">
     <p id="priceDrops"></p>
@@ -99,6 +100,7 @@
   <div id="Best Flips" class="tabcontent">
       <p id="flips"></p>
   </div>
+  
   <script>
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -142,7 +144,8 @@
     document.addEventListener("DOMContentLoaded", function() { 
       if(strings.length) setTimeout(type, newTextDelay + 250);
     });
-
+  </script>
+  <script>
     function openTab(tabName) {
       let i, x, tablinks;
       x = document.getElementsByClassName("tabcontent");
@@ -160,7 +163,7 @@
     document.getElementById("defaultOpen").click();
   </script>
    <script>
-    const apiKey = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'; // Replace with your API key
+    const apiKey = 'ae795182-7862-4591-a436-b93a65e43b42'; // Replace with your API key
     const priceDropThreshold = 0.2;
     const priceRiseThreshold = 0.2;
     const marginChangeThreshold = 0.2;
@@ -225,7 +228,7 @@
   </script>
 
   <script>
-    function openTab(tabName) {
+    function openTab(evt, tabName) {
       var i, x, tablinks;
       x = document.getElementsByClassName("tabcontent");
       for (i = 0; i < x.length; i++) {
