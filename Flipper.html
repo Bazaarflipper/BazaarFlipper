@@ -173,8 +173,8 @@
 
     document.getElementById("defaultOpen").click();
   </script>
-   <script>
-<script>
+  <script>
+
   const apiKey = 'ae795182-7862-4591-a436-b93a65e43b42'; // Replace with your API key
   const priceDropThreshold = 0.2;
   const priceRiseThreshold = 0.2;
@@ -201,7 +201,7 @@
 
   function updateDisplay(tabName, text) {
     const element = document.getElementById(tabName);
-    element.innerHTML = text + "<br>";
+    element.innerHTML += `<p>${text}</p>`;
   }
 
   async function monitorBazaar() {
@@ -250,6 +250,7 @@
 
   setInterval(monitorBazaar, 100);
 </script>
+
 
   </script>
 
