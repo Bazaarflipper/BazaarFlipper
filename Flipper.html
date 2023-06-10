@@ -1,148 +1,220 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Bazaar Flipper</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-      }
-      
-      body {
-        font-family: 'Courier New', monospace;
-        text-align: center;
-        font-size: 20px;
-        background-image: radial-gradient(#00ff38, #007f1c);
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-      }
-      
-      h1 {
-        font-size: 70px;
-        font-family: 'Courier New', monospace;
-        font-weight: bold; 
-      }
-      
-      .tablink {
-        border-radius: 50px;
-        float: left;
-        font-family: 'Ika Compact VAR', fantasy;
-        font-size: 20px;
-        border: none;
-        padding: 14px 16px;
-        color: black;
-        width: 20%;
-        margin-left: 10px;
-        background-image: linear-gradient(45deg, #3a85ea, #A44EFF)
-      }
-      
-      .tablink:hover {
-        background-color: #7411ff;
-      }
+<head>
+  <title>Bazaar Flippe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
-      .tabcontent {
-        color: black;
-        display: none;
-        padding: 100px 20px;
-        height: 100%;
-      }
-      
-      .column {
-        float: left;
-        width: 33.33%;
-      }
-      
-      .row:after {
-        content: "";
-        display: table;
-        clear: both;
-      }
-      
-      .colour {
-        color: red;
-      }
-      
-      .color {
-        color: blue;
-      }
-      
-      .colorr {
-        color: #000000;
-      }
+    body {
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      font-size: 20px;
+      background-image: radial-gradient(#00ff38, #007f1c);
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
 
-      .cursor {
-        width: 2px;
-        height: 43px;
-        background: #EAEAEA;
-        display: inline-block;
-        margin-left: 2px;
-        animation: blink 1s infinite;
-      }
+    h1 {
+      font-size: 70px;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+    }
 
-      @keyframes blink {
-        50% { opacity: 0; }
-      }
-    </style>
-  </head>
-  <body>
-    <h1>
-      Best tracker for
-      <span id="typing-text"></span>
-    </h1>
+    .tablink {
+      border-radius: 50px;
+      float: left;
+      font-family: 'Ika Compact VAR', fantasy;
+      font-size: 20px;
+      border: none;
+      padding: 14px 16px;
+      color: black;
+      width: 20%;
+      margin-left: 10px;
+      background-image: linear-gradient(45deg, #3a85ea, #A44EFF);
+    }
 
-    <button class="tablink" id="defaultOpen">Price Drops</button>
-    
-    <div id="Yeah" class="tabcontent">
-    </div>
+    .tablink:hover {
+      background-color: #7411ff;
+    }
 
+    .tabcontent {
+      color: black;
+      display: none;
+      padding: 100px 20px;
+      height: 100%;
+    }
+
+    .column {
+      float: left;
+      width: 33.33%;
+    }
+
+    .row:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    .colour {
+      color: red;
+    }
+
+    .color {
+      color: blue;
+    }
+
+    .colorr {
+      color: #000000;
+    }
+
+    .cursor {
+      width: 2px;
+      height: 43px;
+      background: #EAEAEA;
+      display: inline-block;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  </style>
   <script>
-      function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const strings = ["Flipping.", "Price drops.", "Price rises."];
+    const colors = ["#E7C01E", "#3CCEFD", "#B62BEA"];
+    const typingText = document.getElementById("typing-text");
+    let currentIndex = 0;
+    let currentString = strings[currentIndex];
+    let currentColor = colors[currentIndex];
+    let isDeleting = false;
+    let typingSpeed = 100;
+    let typedText = '';
+
+    async function typeWriter() {
+      const textLength = typedText.length;
+
+      if (!isDeleting && textLength < currentString.length) {
+        typedText = currentString.substring(0, textLength + 1);
+      } else if (isDeleting && textLength > 0) {
+        typedText = currentString.substring(0, textLength - 1);
       }
 
-      const strings = ["Flipping.", "Price drops.", "Price rises."];
-      const colors = ["#E7C01E", "#3CCEFD", "#B62BEA"];
-      const typingText = document.getElementById("typing-text");
-      let currentIndex = 0;
-      let currentString = strings[currentIndex];
-      let currentColor = colors[currentIndex];
-      let isDeleting = false;
-      let typingSpeed = 100;
-      let typedText = '';
+      typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}<span class="cursor"></span></span>`;
 
-      async function typeWriter() {
-        const textLength = typedText.length;
-
-        if (!isDeleting && textLength < currentString.length) {
-          typedText = currentString.substring(0, textLength + 1);
-        } else if (isDeleting && textLength > 0) {
-          typedText = currentString.substring(0, textLength - 1);
-        }
-
-        typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}<span class="cursor"></span></span>`;
-
-        if (!isDeleting && textLength === currentString.length) {
-          isDeleting = true;
-          typingSpeed = 100; // Delay before starting to delete the text
-          await sleep(500);
-        }
-
-        if (isDeleting && textLength === 0) {
-          isDeleting = false;
-          currentIndex = (currentIndex + 1) % strings.length;
-          currentString = strings[currentIndex];
-          currentColor = colors[currentIndex];
-          typingSpeed = 100; // Delay before starting to type the next string
-          await sleep(500);
-        }
-
-        setTimeout(typeWriter, typingSpeed);
+      if (!isDeleting && textLength === currentString.length) {
+        isDeleting = true;
+        typingSpeed = 100; // Delay before starting to delete the text
+        await sleep(500);
       }
 
-      sleep(1000).then(typeWriter);
+      if (isDeleting && textLength === 0) {
+        isDeleting = false;
+        currentIndex = (currentIndex + 1) % strings.length;
+        currentString = strings[currentIndex];
+        currentColor = colors[currentIndex];
+        typingSpeed = 100; // Delay before starting to type the next string
+        await sleep(500);
+      }
+
+      setTimeout(typeWriter, typingSpeed);
+    }
+
+    sleep(1000).then(typeWriter);
+
+    let old_prices_sell = {};
+    let old_prices_buy = {};
+    const price_drop_list = [];
+
+    function get_bazaar_data(api_key) {
+      const base_url = 'https://api.hypixel.net';
+      const endpoint = '/skyblock/bazaar';
+      const headers = {
+        'Accept': 'application/json',
+      };
+      const params = {
+        'key': api_key,
+      };
+      return fetch(base_url + endpoint + '?key=' + api_key, { headers })
+        .then(response => response.json())
+        .catch(error => {
+          console.log("Error decoding JSON response. The response might be too large or the API might be experiencing issues.");
+          return null;
+        });
+    }
+
+    const api_key = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'; // Replace with your Hypixel API key
+    const price_drop_threshold = 0.2; // e.g., 20% drop in price
+    const price_rise_threshold = 0.2; // e.g., 20% rise in price
+    const margin_change_threshold = 0.2;
+
+    setInterval(() => {
+      get_bazaar_data(api_key)
+        .then(bazaar_data => {
+          if (bazaar_data === null) {
+            return;
+          }
+
+          const products = bazaar_data.products;
+
+          for (const product_id in products) {
+            const product_data = products[product_id];
+
+            if (!product_data.sell_summary || !product_data.buy_summary) {
+              continue;
+            }
+
+            const sell_price = product_data.sell_summary[0].pricePerUnit;
+            const buy_price = product_data.buy_summary[0].pricePerUnit;
+
+            const old_price_sell = old_prices_sell[product_id];
+            const old_price_buy = old_prices_buy[product_id];
+
+            if (old_price_sell && old_price_buy && buy_price && sell_price) {
+              if (sell_price < old_price_sell * (1 - price_drop_threshold) && !price_drop_list.some(item => item[0] === product_id)) {
+                const percent = Math.round(100 * (sell_price / old_price_sell));
+                const tabContent = document.getElementById('tabContent');
+                tabContent.innerHTML += `<p>The sell price of ${product_id} has dropped significantly with a sell and buy price of $${sell_price} and $${buy_price}. The percent change was ${percent}% of the previous price.</p>`;
+                price_drop_list.push([product_id, old_price_sell]);
+              } else if (buy_price > old_price_buy * (1 + price_rise_threshold)) {
+                const percent = Math.round(100 * (buy_price / old_price_buy)) - 1;
+                const tabContent = document.getElementById('tabContent');
+                tabContent.innerHTML += `<p>The buy price of ${product_id} has skyrocketed with a sell and buy price of $${sell_price} and $${buy_price}. The percent change was ${percent}% from the previous price.</p>`;
+              }
+
+              price_drop_list.forEach(([dropped_product_id, original_price]) => {
+                const current_product_data = products[dropped_product_id];
+                if (current_product_data && current_product_data.sell_summary && current_product_data.sell_summary[0].pricePerUnit >= original_price) {
+                  const tabContent = document.getElementById('tabContent');
+                  tabContent.innerHTML += `<p>The sell price of ${dropped_product_id} has returned to its normal price of ${original_price}.</p>`;
+                  price_drop_list.splice(price_drop_list.findIndex(item => item[0] === dropped_product_id), 1);
+                }
+              });
+            }
+
+            old_prices_sell[product_id] = sell_price;
+            old_prices_buy[product_id] = buy_price;
+          }
+        });
+    }, 5000);
   </script>
+</head>
+<body>
+  <h1>
+    Best tracker for
+    <span id="typing-text"></span>
+  </h1>
 
+  <button class="tablink" id="defaultOpen">Price Drops</button>
 
-  </body>
+  <div id="tabContent" class="tabcontent"></div>
+</body>
 </html>
