@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -13,7 +13,7 @@
       font-family: 'Courier New', monospace;
       text-align: center;
       font-size: 20px;
-      background-image: repeating-radial-gradient(#00ff38, #007f1c);
+      background-image: repeating-linear-gradient(45deg, #00ff38, #00b52b);
       background-size: 200% 200%;
       animation: gradientAnimation 10s ease infinite;
     }
@@ -73,27 +73,29 @@
 
     @keyframes blink {
       50% { opacity: 0; }
-      
+    }
+
+    /* Gradient animation */
     @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
   </style>
 </head>
 <body>
   <h1>Best tracker for <span id="typing-text"></span></h1>
 
-  <button class="tablink" id="defaultOpen" onclick="openTab(event, 'Price Drops')">Price Drops</button>
-  <button class="tablink" onclick="openTab(event, 'Price Rises')">Price Rises</button>
-  <button class="tablink" onclick="openTab(event, 'New Flips')">New Flips</button>
-  <button class="tablink" onclick="openTab(event, 'Best Flips')">Best Flips</button>
-
+  <button class="tablink" id="defaultOpen" data-tab="Price Drops">Price Drops</button>
+  <button class="tablink" data-tab="Price Rises">Price Rises</button>
+  <button class="tablink" data-tab="New Flips">New Flips</button>
+  <button class="tablink" data-tab="Best Flips">Best Flips</button>
 
   <div id="Price Drops" class="tabcontent">
     <p id="priceDrops"></p>
@@ -108,7 +110,7 @@
   </div>
 
   <div id="Best Flips" class="tabcontent">
-      <p id="flips"></p>
+    <p id="flips"></p>
   </div>
   
   <script>
@@ -177,8 +179,8 @@
       const base_url = 'https://api.hypixel.net';
       const endpoint = '/skyblock/bazaar';
       try {
-        let response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
-        let data = await response.json();
+        const response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
+        const data = await response.json();
         return data;
       } catch (error) {
         console.error('Error fetching bazaar data:', error);
@@ -188,49 +190,59 @@
 
     function updateDisplay(tabName, message) {
       const element = document.getElementById(tabName);
-      const paragraph = document.createElement('p');
-      paragraph.innerHTML = message;
-      element.appendChild(paragraph);
+      element.innerHTML = message;
     }
 
     async function monitorBazaar() {
       try {
         const bazaarData = await getBazaarData(apiKey);
-        if (bazaarData === null) {
+        if (!bazaarData || !bazaarData.products) {
           return;
         }
 
-        for (let product_id in bazaarData['products']) {
-          const productData = bazaarData['products'][product_id];
-          if (!productData['sell_summary'] || !productData['buy_summary']) {
+        for (const product_id in bazaarData.products) {
+          const productData = bazaarData.products[product_id];
+          const sellSummary = productData.sell_summary;
+          const buySummary = productData.buy_summary;
+
+          if (!sellSummary || !buySummary) {
             continue;
           }
 
-          const sellPrice = productData['sell_summary'][0]['pricePerUnit'];
-          const buyPrice = productData['buy_summary'][0]['pricePerUnit'];
+          const sellPrice = sellSummary[0].pricePerUnit;
+          const buyPrice = buySummary[0].pricePerUnit;
 
-          let oldPriceSell = oldPricesSell[product_id];
-          let oldPriceBuy = oldPricesBuy[product_id];
+          const oldPriceSell = oldPricesSell[product_id];
+          const oldPriceBuy = oldPricesBuy[product_id];
 
           if (oldPriceSell && sellPrice < oldPriceSell * (1 - priceDropThreshold)) {
-            const percent = Math.round(100 * (sellPrice / oldPriceSell));
-            const message = `The sell price of ${product_id} has dropped significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price decreased by ${percent}%.`;
-            updateDisplay('Price Drops', message);
-            tabContentHistory['Price Drops'] += message + '<br>';
+            const percent = Math.round(100 * (sellPrice / oldPriceSell - 1));
+            const message = `The sell price of ${product_id} has dropped significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
+
+            if (message !== tabContentHistory['Price Drops']) {
+              updateDisplay('Price Drops', message);
+              tabContentHistory['Price Drops'] = message;
+            }
           }
           
           if (oldPriceBuy && buyPrice > oldPriceBuy * (1 + priceRiseThreshold)) {
-            const percent = Math.round(100 * (buyPrice / oldPriceBuy));
-            const message = `The buy price of ${product_id} has increased significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price increased by ${percent}%.`;
-            updateDisplay('Price Rises', message);
-            tabContentHistory['Price Rises'] += message + '<br>';
+            const percent = Math.round(100 * (buyPrice / oldPriceBuy - 1));
+            const message = `The buy price of ${product_id} has increased significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
+
+            if (message !== tabContentHistory['Price Rises']) {
+              updateDisplay('Price Rises', message);
+              tabContentHistory['Price Rises'] = message;
+            }
           }
           
           if (oldPriceSell && oldPriceBuy && Math.abs(sellPrice - buyPrice) > oldPriceSell * marginChangeThreshold) {
             const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
-            const message = `The difference between the sell and buy prices of ${product_id} has changed significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The margin changed by ${percent}%.`;
-            updateDisplay('New Flips', message);
-            tabContentHistory['New Flips'] += message + '<br>';
+            const message = `The difference between the sell and buy prices of ${product_id} has changed significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Margin Change: ${percent}%.`;
+
+            if (message !== tabContentHistory['New Flips']) {
+              updateDisplay('New Flips', message);
+              tabContentHistory['New Flips'] = message;
+            }
           }
 
           oldPricesSell[product_id] = sellPrice;
@@ -241,20 +253,28 @@
       }
     }
 
-    setInterval(monitorBazaar, 100);
+    setInterval(monitorBazaar, 5000); // Adjust the interval as per your needs
 
     function openTab(evt, tabName) {
-      var i, x, tablinks;
-      x = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < x.length; i++) {
-        x[i].style.display = "none";
+      const tabContent = document.getElementsByClassName("tabcontent");
+      for (let i = 0; i < tabContent.length; i++) {
+        tabContent[i].style.display = "none";
       }
-      tablinks = document.getElementsByClassName("tablink");
-      for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].classList.remove("active");
+
+      const tabLinks = document.getElementsByClassName("tablink");
+      for (let i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].classList.remove("active");
       }
+
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.classList.add("active");
+    }
+
+    const tabButtons = document.getElementsByClassName("tablink");
+    for (let i = 0; i < tabButtons.length; i++) {
+      tabButtons[i].addEventListener("click", function(evt) {
+        openTab(evt, this.dataset.tab);
+      });
     }
 
     document.getElementById("defaultOpen").click();
