@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -174,68 +174,71 @@
     document.getElementById("defaultOpen").click();
   </script>
    <script>
-    const apiKey = 'ae795182-7862-4591-a436-b93a65e43b42'; // Replace with your API key
-    const priceDropThreshold = 0.2;
-    const priceRiseThreshold = 0.2;
-    const marginChangeThreshold = 0.2;
+<script>
+  const apiKey = 'ae795182-7862-4591-a436-b93a65e43b42'; // Replace with your API key
+  const priceDropThreshold = 0.2;
+  const priceRiseThreshold = 0.2;
+  const marginChangeThreshold = 0.2;
 
-    let oldPricesSell = {};
-    let oldPricesBuy = {};
-    let priceDropList = [];
+  let oldPricesSell = {};
+  let oldPricesBuy = {};
+  let priceDropList = [];
 
-    async function getBazaarData(apiKey) {
-      const base_url = 'https://api.hypixel.net';
-      const endpoint = '/skyblock/bazaar';
-      let response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
-      let data = await response.json();
-      return data;
+  async function getBazaarData(apiKey) {
+    const base_url = 'https://api.hypixel.net';
+    const endpoint = '/skyblock/bazaar';
+    let response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
+    let data = await response.json();
+    return data;
+  }
+
+  function updateDisplay(id, text) {
+    const element = document.getElementById(id);
+    element.innerHTML = ""; // clear previous text
+    element.innerHTML += text + "<br>";
+  }
+
+  async function monitorBazaar() {
+    const bazaarData = await getBazaarData(apiKey);
+    if (bazaarData === null) {
+      return;
     }
 
-    function updateDisplay(id, text) {
-      const element = document.getElementById(id);
-      element.innerHTML = ""; // clear previous text
-      element.innerHTML += text + "<br>";
-    }
-
-    async function monitorBazaar() {
-      const bazaarData = await getBazaarData(apiKey);
-      if (bazaarData === null) {
-        return;
+    for (let product_id in bazaarData['products']) {
+      const productData = bazaarData['products'][product_id];
+      if (!productData['sell_summary'] || !productData['buy_summary']) {
+        continue;
       }
 
-      for (let product_id in bazaarData['products']) {
-        const productData = bazaarData['products'][product_id];
-        if (!productData['sell_summary'] || !productData['buy_summary']) {
-            continue;
-        }
+      const sellPrice = productData['sell_summary'][0]['pricePerUnit'];
+      const buyPrice = productData['buy_summary'][0]['pricePerUnit'];
 
-        const sellPrice = productData['sell_summary'][0]['pricePerUnit'];
-        const buyPrice = productData['buy_summary'][0]['pricePerUnit'];
+      let oldPriceSell = oldPricesSell[product_id];
+      let oldPriceBuy = oldPricesBuy[product_id];
 
-        let oldPriceSell = oldPricesSell[product_id];
-        let oldPriceBuy = oldPricesBuy[product_id];
-
-        if (oldPriceSell && sellPrice < oldPriceSell * (1 - priceDropThreshold)) {
-          const percent = Math.round(100 * (sellPrice / oldPriceSell));
-          updateDisplay("priceDrops", `The sell price of ${product_id} has dropped significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price decreased by ${percent}%.`);
-        }
-        
-        if (oldPriceBuy && buyPrice > oldPriceBuy * (1 + priceRiseThreshold)) {
-          const percent = Math.round(100 * (buyPrice / oldPriceBuy));
-          updateDisplay("priceRises", `The buy price of ${product_id} has increased significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price increased by ${percent}%.`);
-        }
-        
-        if (oldPriceSell && oldPriceBuy && Math.abs(sellPrice - buyPrice) > oldPriceSell * marginChangeThreshold) {
-          const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
-          updateDisplay("hotNewFlips", `The difference between the sell and buy prices of ${product_id} has changed significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The margin changed by ${percent}%.`);
-        }
-
-        oldPricesSell[product_id] = sellPrice;
-        oldPricesBuy[product_id] = buyPrice;
+      if (oldPriceSell && sellPrice < oldPriceSell * (1 - priceDropThreshold)) {
+        const percent = Math.round(100 * (sellPrice / oldPriceSell));
+        updateDisplay("priceDrops", `The sell price of ${product_id} has dropped significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price decreased by ${percent}%.`);
       }
-    }
+        
+      if (oldPriceBuy && buyPrice > oldPriceBuy * (1 + priceRiseThreshold)) {
+        const percent = Math.round(100 * (buyPrice / oldPriceBuy));
+        updateDisplay("priceRises", `The buy price of ${product_id} has increased significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price increased by ${percent}%.`);
+      }
+        
+      if (oldPriceSell && oldPriceBuy && Math.abs(sellPrice - buyPrice) > oldPriceSell * marginChangeThreshold) {
+        const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
+        updateDisplay("hotNewFlips", `The difference between the sell and buy prices of ${product_id} has changed significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The margin changed by ${percent}%.`);
+      }
 
-    setInterval(monitorBazaar, 100);
+      oldPricesSell[product_id] = sellPrice;
+      oldPricesBuy[product_id] = buyPrice;
+    }
+  }
+
+  setInterval(monitorBazaar, 1000); // Update every second
+</script>
+
   </script>
 
   <script>
