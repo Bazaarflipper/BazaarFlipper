@@ -91,10 +91,29 @@
       <span id="typing-text"></span>
     </h1>
 
-    <button class="tablink" id="defaultOpen">Price Drops</button>
-    
-    <div id="Yeah" class=".tabcontent">
-    put price drops here
+    <button class="tablink" id="defaultOpen" onclick="openTab('Price Drops')">Price Drops</button>
+    <button class="tablink" onclick="openTab('Price Rises')">Price Rises</button>
+    <button class="tablink" onclick="openTab('Flipping')">Flipping</button>
+    <button class="tablink" onclick="openTab('More')">More</button>
+
+    <div id="Price Drops" class="tabcontent">
+      put price drops here
+      <div id="Price Drops js"></div>
+    </div>
+
+    <div id="Price Rises" class="tabcontent">
+      put price rises here
+      <div id="Price Rises js"></div>
+    </div>
+
+    <div id="Flipping" class="tabcontent">
+      put flipping here
+      <div id="Flipping js"></div>
+    </div>
+
+    <div id="More" class="tabcontent">
+      put more here
+      <div id="More js"></div>
     </div>
 
   <script>
@@ -142,6 +161,15 @@
       }
 
       sleep(1000).then(typeWriter);
+        function openTab(tabName) {
+      const tabcontents = document.getElementsByClassName("tabcontent");
+      for (let i = 0; i < tabcontents.length; i++) {
+        tabcontents[i].style.display = "none";
+      }
+      document.getElementById(tabName).style.display = "block";
+    }
+    
+    document.getElementById("defaultOpen").click();
   </script>
 
 
