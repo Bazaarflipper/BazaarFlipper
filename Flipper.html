@@ -102,48 +102,59 @@
   </div>
   
   <script>
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    const strings = ["Price Drops", "Price Rises", "Flipping", "More"];
-    const typingDelay = 200;
-    const erasingDelay = 100;
-    const newTextDelay = 2000; // Delay between current and next text
-    let textArrayIndex = 0;
-    let charIndex = 0;
-
-    function type() {
-      if (charIndex < strings[textArrayIndex].length) {
-        if(!cursor.classList.contains("typing")) cursor.classList.add("typing");
-        document.getElementById("typing-text").textContent += strings[textArrayIndex].charAt(charIndex);
-        charIndex++;
-        setTimeout(type, typingDelay);
-      } 
-      else {
-        cursor.classList.remove("typing");
-        setTimeout(erase, newTextDelay);
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
       }
-    }
 
-    function erase() {
-      if (charIndex > 0) {
-        if(!cursor.classList.contains("typing")) cursor.classList.add("typing");
-        document.getElementById("typing-text").textContent = strings[textArrayIndex].substring(0, charIndex-1);
-        charIndex--;
-        setTimeout(erase, erasingDelay);
-      } 
-      else {
-        cursor.classList.remove("typing");
-        textArrayIndex++;
-        if(textArrayIndex>=strings.length) textArrayIndex=0;
-        setTimeout(type, typingDelay + 1100);
+      const strings = ["Flipping.", "Price drops.", "Price rises."];
+      const colors = ["#E7C01E", "#3CCEFD", "#B62BEA"];
+      const typingText = document.getElementById("typing-text");
+      let currentIndex = 0;
+      let currentString = strings[currentIndex];
+      let currentColor = colors[currentIndex];
+      let isDeleting = false;
+      let typingSpeed = 100;
+      let typedText = '';
+
+      async function typeWriter() {
+        const textLength = typedText.length;
+
+        if (!isDeleting && textLength < currentString.length) {
+          typedText = currentString.substring(0, textLength + 1);
+        } else if (isDeleting && textLength > 0) {
+          typedText = currentString.substring(0, textLength - 1);
+        }
+
+        typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}<span class="cursor"></span></span>`;
+
+        if (!isDeleting && textLength === currentString.length) {
+          isDeleting = true;
+          typingSpeed = 100; // Delay before starting to delete the text
+          await sleep(500);
+        }
+
+        if (isDeleting && textLength === 0) {
+          isDeleting = false;
+          currentIndex = (currentIndex + 1) % strings.length;
+          currentString = strings[currentIndex];
+          currentColor = colors[currentIndex];
+          typingSpeed = 100; // Delay before starting to type the next string
+          await sleep(500);
+        }
+
+        setTimeout(typeWriter, typingSpeed);
       }
-    }
 
-    document.addEventListener("DOMContentLoaded", function() { 
-      if(strings.length) setTimeout(type, newTextDelay + 250);
-    });
+      sleep(1000).then(typeWriter);
+        function openTab(tabName) {
+      const tabcontents = document.getElementsByClassName("tabcontent");
+      for (let i = 0; i < tabcontents.length; i++) {
+        tabcontents[i].style.display = "none";
+      }
+      document.getElementById(tabName).style.display = "block";
+    }
+    
+    document.getElementById("defaultOpen").click();
   </script>
   <script>
     function openTab(tabName) {
