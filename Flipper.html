@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -37,7 +37,7 @@
       text-align: center; 
     }
     .tablink.active {
-    background-image: linear-gradient(45deg, #1f0247, #7411ff);
+      background-image: linear-gradient(45deg, #1f0247, #7411ff);
     }
 
     .tablink:hover {
@@ -119,6 +119,8 @@
   
   
   <script>
+    // JavaScript code here
+
     function sleep(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -160,26 +162,23 @@
       }
 
       setTimeout(typeWriter, typingSpeed);
-      
     }
+
     sleep(1000).then(typeWriter);
-  </script>
-  <script>
+
     function openTab(evt, tabName) {
-      var i, tabcontent, tablinks;
-      tabcontent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+      var i, tabContent, tabLinks;
+      tabContent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabContent.length; i++) {
+        tabContent[i].style.display = "none";
       }
-      tablinks = document.getElementsByClassName("tablink");
-      for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      tabLinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
       }
       document.getElementById(tabName).style.display = "block";
       evt.currentTarget.className += " active";
     }
-  </script>
-  <script>
 
     let api_key = '702f98df-b74f-4d4d-a9dc-f8b89ff850e4';
     let price_drop_threshold = 0.2;
@@ -254,64 +253,33 @@
         old_prices_buy = new_prices_buy;
 
         // Update the display
-        let drop_table = document.getElementById('drop_table');
-        let rise_table = document.getElementById('rise_table');
+        let priceDropsDiv = document.getElementById('priceDropsDiv');
+        let priceRisesDiv = document.getElementById('priceRisesDiv');
 
-        // Clear the tables
-        drop_table.innerHTML = '';
-        rise_table.innerHTML = '';
+        // Clear the divs
+        priceDropsDiv.innerHTML = '';
+        priceRisesDiv.innerHTML = '';
 
-        // Add new data to the tables
+        // Add new data to the divs
         for (let item of price_drop_list) {
-          let row = drop_table.insertRow();
-          row.insertCell().innerText = item.product;
-          row.insertCell().innerText = item.old_price.toFixed(2);
-          row.insertCell().innerText = item.new_price.toFixed(2);
+          let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
+          priceDropsDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has dropped by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
         }
 
         for (let item of price_rise_list) {
-          let row = rise_table.insertRow();
-          row.insertCell().innerText = item.product;
-          row.insertCell().innerText = item.old_price.toFixed(2);
-          row.insertCell().innerText = item.new_price.toFixed(2);
+          let percentage = ((item.new_price - item.old_price) / item.old_price * 100).toFixed(2);
+          priceRisesDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has risen by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
         }
 
       } catch (error) {
         console.error("An error occurred during fetching the data: ", error);
-  for (let item of price_drop_list) {
-        let drop_div = document.getElementById('priceDropsDiv');
-        let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
-        drop_div.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has dropped by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
-      }
-
-      for (let item of price_rise_list) {
-        let rise_div = document.getElementById('priceRisesDiv');
-        let percentage = ((item.new_price - item.old_price) / item.old_price * 100).toFixed(2);
-        rise_div.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has risen by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
       }
     }
-
-
 
     setInterval(fetchData, 5000); // refresh every 5 seconds
-  </script>
-  <script>
+
     // Initialize the tab
-
-    function openTab(evt, tabName) {
-      var i, tabContent, tabLinks;
-      tabContent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabContent.length; i++) {
-        tabContent[i].style.display = "none";
-      }
-      tabLinks = document.getElementsByClassName("tablink");
-      for (i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
-      }
-      document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.className += " active";
-    }
-
     document.getElementById("defaultOpen").click();
+  </script>
 </body>
 </html>
