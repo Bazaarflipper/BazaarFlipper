@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -224,33 +224,35 @@ async function fetchData() {
     let price_drop_list = [];
 
     for (let product of Object.values(bazaar_data.products)) {
-      let sell_price = product.sell_summary[0].pricePerUnit;
-      let buy_price = product.buy_summary[0].pricePerUnit;
-      let product_id = product.productId;
+      if (product.sell_summary[0] && product.buy_summary[0]) {
+        let sell_price = product.sell_summary[0].pricePerUnit;
+        let buy_price = product.buy_summary[0].pricePerUnit;
+        let product_id = product.productId;
 
-      new_prices_sell[product_id] = sell_price;
-      new_prices_buy[product_id] = buy_price;
+        new_prices_sell[product_id] = sell_price;
+        new_prices_buy[product_id] = buy_price;
 
-      let old_sell_price = old_prices_sell[product_id];
-      let old_buy_price = old_prices_buy[product_id];
+        let old_sell_price = old_prices_sell[product_id];
+        let old_buy_price = old_prices_buy[product_id];
 
-      if (old_sell_price !== undefined) {
-        if (sell_price < old_sell_price && (old_sell_price / sell_price - 1) > price_drop_threshold) {
-          price_drop_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
-        } else if (sell_price > old_sell_price && (sell_price / old_sell_price - 1) > price_rise_threshold) {
-          price_rise_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
+        if (old_sell_price !== undefined) {
+          let sell_price_ratio = sell_price / old_sell_price;
+          if (sell_price_ratio - 1 > price_rise_threshold) {
+            price_rise_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
+          } else if (1 - sell_price_ratio > price_drop_threshold) {
+            price_drop_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
+          }
+        }
+
+        if (old_buy_price !== undefined) {
+          let buy_price_ratio = buy_price / old_buy_price;
+          if (buy_price_ratio - 1 > price_rise_threshold) {
+            price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
+          } else if (1 - buy_price_ratio > price_drop_threshold) {
+            price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
+          }
         }
       }
-
-      if (old_buy_price !== undefined) {
-        if (buy_price < old_buy_price && (old_buy_price / buy_price - 1) > price_drop_threshold) {
-          price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-        } else if (buy_price > old_buy_price && (buy_price / old_buy_price - 1) > price_rise_threshold) {
-          price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-        }
-      }
-    }
-
     }
 
     old_prices_sell = new_prices_sell;
@@ -287,6 +289,7 @@ async function fetchData() {
 
 fetchData();
 setInterval(fetchData, 500);
+
     // Initialize the tab
     document.getElementById("defaultOpen").click();
   </script>
