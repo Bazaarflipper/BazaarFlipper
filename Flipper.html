@@ -31,7 +31,7 @@
       border: none;
       padding: 14px 16px;
       color: black;
-      width: calc(25% - 10px); /* 4 buttons - 20px for margins */
+      width: calc(20% - 10px); /* 4 buttons - 20px for margins */
       margin: 5px;
       background-image: linear-gradient(45deg, #3a85ea, #A44EFF);
     }
@@ -161,8 +161,8 @@
   </script>
    <script>
     const apiKey = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'; // Replace with your API key
-    const priceDropThreshold = 0.2;  // e.g., 20% drop in price
-    const priceRiseThreshold = 0.2;  // e.g., 20% rise in price
+    const priceDropThreshold = 0.2;
+    const priceRiseThreshold = 0.2;
     const marginChangeThreshold = 0.2;
 
     let oldPricesSell = {};
@@ -178,7 +178,9 @@
     }
 
     function updateDisplay(id, text) {
-      document.getElementById(id).innerHTML += text + "<br>";
+      const element = document.getElementById(id);
+      element.innerHTML = ""; // clear previous text
+      element.innerHTML += text + "<br>";
     }
 
     async function monitorBazaar() {
