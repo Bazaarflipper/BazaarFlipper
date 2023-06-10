@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Bazaar Flippe</title>
+    <title>Bazaar Flipper</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       html, body {
@@ -90,7 +90,7 @@
       }
 
       const strings = ["Flipping.", "Price drops.", "Price rises."];
-      const colors = ["#E7C01E", "#49A1F3", "#B62BEA"];
+      const colors = ["#E7C01E", "#3CCEFD", "#B62BEA"];
       const typingText = document.getElementById("typing-text");
       let currentIndex = 0;
       let currentString = strings[currentIndex];
@@ -128,7 +128,7 @@
         setTimeout(typeWriter, typingSpeed);
       }
 
-      typeWriter();
+      sleep(500).then(typeWriter);
   </script>
 
 
