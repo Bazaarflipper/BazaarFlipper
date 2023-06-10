@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -224,34 +224,33 @@ async function fetchData() {
     let price_drop_list = [];
 
     for (let product of Object.values(bazaar_data.products)) {
-      // check if sell_summary and buy_summary are present and are not empty
-      if (product.sell_summary && product.sell_summary.length > 0 && product.buy_summary && product.buy_summary.length > 0) {
-        let sell_price = product.sell_summary[0].pricePerUnit;
-        let buy_price = product.buy_summary[0].pricePerUnit;
-        let product_id = product.productId;
+      let sell_price = product.sell_summary[0].pricePerUnit;
+      let buy_price = product.buy_summary[0].pricePerUnit;
+      let product_id = product.productId;
 
-        new_prices_sell[product_id] = sell_price;
-        new_prices_buy[product_id] = buy_price;
+      new_prices_sell[product_id] = sell_price;
+      new_prices_buy[product_id] = buy_price;
 
-        let old_sell_price = old_prices_sell[product_id];
-        let old_buy_price = old_prices_buy[product_id];
+      let old_sell_price = old_prices_sell[product_id];
+      let old_buy_price = old_prices_buy[product_id];
 
-        if (old_sell_price !== undefined) {
-          if (sell_price / old_sell_price - 1 > price_rise_threshold) {
-            price_rise_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
-          } else if (old_sell_price / sell_price - 1 > price_drop_threshold) {
-            price_drop_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
-          }
-        }
-
-        if (old_buy_price !== undefined) {
-          if (buy_price / old_buy_price - 1 > price_rise_threshold) {
-            price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-          } else if (old_buy_price / buy_price - 1 > price_drop_threshold) {
-            price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-          }
+      if (old_sell_price !== undefined) {
+        if (sell_price < old_sell_price && (old_sell_price / sell_price - 1) > price_drop_threshold) {
+          price_drop_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
+        } else if (sell_price > old_sell_price && (sell_price / old_sell_price - 1) > price_rise_threshold) {
+          price_rise_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
         }
       }
+
+      if (old_buy_price !== undefined) {
+        if (buy_price < old_buy_price && (old_buy_price / buy_price - 1) > price_drop_threshold) {
+          price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
+        } else if (buy_price > old_buy_price && (buy_price / old_buy_price - 1) > price_rise_threshold) {
+          price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
+        }
+      }
+    }
+
     }
 
     old_prices_sell = new_prices_sell;
