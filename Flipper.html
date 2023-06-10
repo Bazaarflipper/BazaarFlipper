@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -202,7 +202,7 @@
       return data;
     }
 
-        async function fetchData() {
+     async function fetchData() {
       try {
         let bazaar_data = await get_bazaar_data(api_key);
 
@@ -245,7 +245,9 @@
               price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
             } else if (old_buy_price / buy_price - 1 > price_drop_threshold) {
               price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-            }
+            }  } catch (error) {
+    console.error("An error occurred during fetching the data: ", error);
+
           }
         }
 
