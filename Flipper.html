@@ -13,7 +13,7 @@
       font-family: 'Courier New', monospace;
       text-align: center;
       font-size: 20px;
-      background-image: repeating-radial-gradient(circle, #00ff38, #007f1c);
+      background-image: radial-gradient(circle, #00ff38, #007f1c);
       background-size: 100% 100%;
       background-repeat: no-repeat;
     }
@@ -159,7 +159,7 @@
 
     sleep(1000).then(typeWriter);
 
-    const apiKey = 'de9f4b3f-5904-4eec-a42e-c4cedcb357ba'; // Replace with your actual API key from Hypixel
+    const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key from Hypixel
     const priceDropThreshold = 0.2;
     const priceRiseThreshold = 0.2;
     const marginChangeThreshold = 0.2;
@@ -221,8 +221,8 @@
             const message = `The sell price of ${product_id} has dropped significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
 
             if (!tabContentHistory['PriceDrops'].includes(message)) {
-              updateDisplay('PriceDrops', message);
               tabContentHistory['PriceDrops'] += message + '<br>';
+              updateDisplay('PriceDrops', message);
             }
           }
           
@@ -231,8 +231,8 @@
             const message = `The buy price of ${product_id} has increased significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
 
             if (!tabContentHistory['PriceRises'].includes(message)) {
-              updateDisplay('PriceRises', message);
               tabContentHistory['PriceRises'] += message + '<br>';
+              updateDisplay('PriceRises', message);
             }
           }
           
@@ -241,8 +241,8 @@
             const message = `The difference between the sell and buy prices of ${product_id} has changed significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Margin Change: ${percent}%.`;
 
             if (!tabContentHistory['NewFlips'].includes(message)) {
-              updateDisplay('NewFlips', message);
               tabContentHistory['NewFlips'] += message + '<br>';
+              updateDisplay('NewFlips', message);
             }
           }
 
