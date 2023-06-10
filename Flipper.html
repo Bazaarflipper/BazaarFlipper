@@ -93,27 +93,57 @@
 
     <button class="tablink" id="defaultOpen">Price Drops</button>
     
-    <div id="defaultOpen" class="tabcontent">
+    <div id="Yeah" class="tabcontent">
     put price drops here
     </div>
 
-     <script>
-      async function get_bazaar_data(api_key) {
-        const base_url = 'https://api.hypixel.net';
-        const endpoint = '/skyblock/bazaar';
-        const headers = {
-          'Accept': 'application/json',
-        };
-        const params = new URLSearchParams({
-          'key': api_key,
-        });
-        return fetch(base_url + endpoint + '?' + params.toString(), { headers: headers })
-          .then(response => response.json())
-          .catch(error => {
-            console.error('Error fetching bazaar data:', error);
-            return null;
-          });
+  <script>
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
       }
-    </script>
+
+      const strings = ["Flipping.", "Price drops.", "Price rises."];
+      const colors = ["#E7C01E", "#3CCEFD", "#B62BEA"];
+      const typingText = document.getElementById("typing-text");
+      let currentIndex = 0;
+      let currentString = strings[currentIndex];
+      let currentColor = colors[currentIndex];
+      let isDeleting = false;
+      let typingSpeed = 100;
+      let typedText = '';
+
+      async function typeWriter() {
+        const textLength = typedText.length;
+
+        if (!isDeleting && textLength < currentString.length) {
+          typedText = currentString.substring(0, textLength + 1);
+        } else if (isDeleting && textLength > 0) {
+          typedText = currentString.substring(0, textLength - 1);
+        }
+
+        typingText.innerHTML = `<span style="color: ${currentColor}">${typedText}<span class="cursor"></span></span>`;
+
+        if (!isDeleting && textLength === currentString.length) {
+          isDeleting = true;
+          typingSpeed = 100; // Delay before starting to delete the text
+          await sleep(500);
+        }
+
+        if (isDeleting && textLength === 0) {
+          isDeleting = false;
+          currentIndex = (currentIndex + 1) % strings.length;
+          currentString = strings[currentIndex];
+          currentColor = colors[currentIndex];
+          typingSpeed = 100; // Delay before starting to type the next string
+          await sleep(500);
+        }
+
+        setTimeout(typeWriter, typingSpeed);
+      }
+
+      sleep(1000).then(typeWriter);
+  </script>
+
+
   </body>
 </html>
