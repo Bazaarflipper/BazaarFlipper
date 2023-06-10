@@ -92,10 +92,10 @@
 <body>
   <h1>Best tracker for <span id="typing-text"></span></h1>
 
-  <button class="tablink" id="defaultOpen" data-tab="Price Drops">Price Drops</button>
-  <button class="tablink" data-tab="Price Rises">Price Rises</button>
-  <button class="tablink" data-tab="New Flips">New Flips</button>
-  <button class="tablink" data-tab="Best Flips">Best Flips</button>
+  <button class="tablink" id="defaultOpen" onclick="openTab(event, 'Price Drops')">Price Drops</button>
+  <button class="tablink" onclick="openTab(event, 'Price Rises')">Price Rises</button>
+  <button class="tablink" onclick="openTab(event, 'New Flips')">New Flips</button>
+  <button class="tablink" onclick="openTab(event, 'Best Flips')">Best Flips</button>
 
   <div id="Price Drops" class="tabcontent">
     <p id="priceDrops"></p>
@@ -106,11 +106,11 @@
   </div>
 
   <div id="New Flips" class="tabcontent">
-    <p id="hotNewFlips"></p>
+    <p id="newFlips"></p>
   </div>
 
   <div id="Best Flips" class="tabcontent">
-    <p id="flips"></p>
+    <p id="bestFlips"></p>
   </div>
   
   <script>
@@ -166,7 +166,6 @@
 
     let oldPricesSell = {};
     let oldPricesBuy = {};
-    let priceDropList = [];
 
     const tabContentHistory = {
       'Price Drops': '',
@@ -255,7 +254,7 @@
       }
     }
 
-    setInterval(monitorBazaar, 5000); // Adjust the interval as per your needs
+    setInterval(monitorBazaar, 5000);
 
     function openTab(evt, tabName) {
       const tabContent = document.getElementsByClassName("tabcontent");
