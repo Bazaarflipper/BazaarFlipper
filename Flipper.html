@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -73,11 +73,6 @@
 
     @keyframes blink {
       50% { opacity: 0; }
-    }
-
-    /* Add active class to the currently active tab button */
-    .active {
-      background-image: linear-gradient(#1f0247, #7411ff);
     }
   </style>
 </head>
@@ -152,55 +147,98 @@
 
     sleep(1000).then(typeWriter);
 
-    // Store the currently active tab name
-    let activeTab = 'Price Drops';
+    const apiKey = 'ae795182-7862-4591-a436-b93a65e43b42'; // Replace with your API key
+    const priceDropThreshold = 0.2;
+    const priceRiseThreshold = 0.2;
+    const marginChangeThreshold = 0.2;
 
-    function openTab(event, tabName) {
-      const tabcontents = document.getElementsByClassName("tabcontent");
-      for (let i = 0; i < tabcontents.length; i++) {
-        tabcontents[i].style.display = "none";
+    let oldPricesSell = {};
+    let oldPricesBuy = {};
+    let priceDropList = [];
+
+    const tabContentHistory = {
+      'Price Drops': '',
+      'Price Rises': '',
+      'Flipping': '',
+      'More': ''
+    };
+
+    async function getBazaarData(apiKey) {
+      const base_url = 'https://api.hypixel.net';
+      const endpoint = '/skyblock/bazaar';
+      let response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
+      let data = await response.json();
+      return data;
+    }
+
+    async function monitorBazaar() {
+      const bazaarData = await getBazaarData(apiKey);
+      if (bazaarData === null) {
+        return;
+      }
+
+      function updateDisplay(tabName, text) {
+        const element = document.getElementById(tabName);
+        element.innerHTML += `<p>${text}</p>`;
+      }
+
+      for (let product_id in bazaarData['products']) {
+        const productData = bazaarData['products'][product_id];
+        if (!productData['sell_summary'] || !productData['buy_summary']) {
+          continue;
+        }
+
+        const sellPrice = productData['sell_summary'][0]['pricePerUnit'];
+        const buyPrice = productData['buy_summary'][0]['pricePerUnit'];
+
+        let oldPriceSell = oldPricesSell[product_id];
+        let oldPriceBuy = oldPricesBuy[product_id];
+
+        if (oldPriceSell && sellPrice < oldPriceSell * (1 - priceDropThreshold)) {
+          const percent = Math.round(100 * (sellPrice / oldPriceSell));
+          const message = `The sell price of ${product_id} has dropped significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price decreased by ${percent}%.`;
+          updateDisplay('Price Drops', message);
+          tabContentHistory['Price Drops'] += message + '<br>';
+        }
+        
+        if (oldPriceBuy && buyPrice > oldPriceBuy * (1 + priceRiseThreshold)) {
+          const percent = Math.round(100 * (buyPrice / oldPriceBuy));
+          const message = `The buy price of ${product_id} has increased significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The price increased by ${percent}%.`;
+          updateDisplay('Price Rises', message);
+          tabContentHistory['Price Rises'] += message + '<br>';
+        }
+        
+        if (oldPriceSell && oldPriceBuy && Math.abs(sellPrice - buyPrice) > oldPriceSell * marginChangeThreshold) {
+          const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
+          const message = `The difference between the sell and buy prices of ${product_id} has changed significantly with a sell and buy price of ${sellPrice} and ${buyPrice}. The margin changed by ${percent}%.`;
+          updateDisplay('Flipping', message);
+          tabContentHistory['Flipping'] += message + '<br>';
+        }
+
+        oldPricesSell[product_id] = sellPrice;
+        oldPricesBuy[product_id] = buyPrice;
+      }
+    }
+
+    setInterval(monitorBazaar, 100);
+  </script>
+
+  <script>
+    function openTab(evt, tabName) {
+      let i, x, tablinks;
+      x = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablink");
+      for (i = 0; i < x.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" w3-red", "");
       }
       document.getElementById(tabName).style.display = "block";
-
-      // Remove the active class from all tab buttons
-      const tablinks = document.getElementsByClassName("tablink");
-      for (let i = 0; i < tablinks.length; i++) {
-        tablinks[i].classList.remove("active");
-      }
-
-      // Add the active class to the clicked tab button
-      event.currentTarget.classList.add("active");
-
-      // Update the active tab
-      activeTab = tabName;
+      evt.currentTarget.className += " w3-red";
     }
 
-    // Initialize the default open tab
     document.getElementById("defaultOpen").click();
-
-    // Update the tab content when the page is loaded or focused
-    window.addEventListener('DOMContentLoaded', updateTabContent);
-    window.addEventListener('focus', updateTabContent);
-
-    function updateTabContent() {
-      const tabContentElement = document.getElementById(activeTab);
-      const tabContentHistory = localStorage.getItem(activeTab);
-
-      if (tabContentElement && tabContentHistory) {
-        tabContentElement.innerHTML = tabContentHistory;
-      }
-    }
-
-    // Save the tab content to localStorage when a tab is closed
-    window.addEventListener('beforeunload', saveTabContent);
-
-    function saveTabContent() {
-      const tabContentElement = document.getElementById(activeTab);
-
-      if (tabContentElement) {
-        localStorage.setItem(activeTab, tabContentElement.innerHTML);
-      }
-    }
   </script>
 </body>
 </html>
