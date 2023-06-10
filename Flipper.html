@@ -143,7 +143,81 @@
 
       sleep(1000).then(typeWriter);
   </script>
+  <script?
+    let old_price_buy = 1;
+    let old_price_sell = 1;
+    let buy_price = 1;
+    let sell_price = 1;
 
+    function get_bazaar_data(api_key) {
+      const base_url = 'https://api.hypixel.net';
+      const endpoint = '/skyblock/bazaar';
+      const headers = {
+        'Accept': 'application/json',
+      };
+      const params = {
+        'key': api_key,
+      };
+      return fetch(base_url + endpoint + '?' + new URLSearchParams(params), {
+        headers: headers,
+      })
+        .then(response => response.json())
+        .catch(error => {
+          console.error('Error fetching bazaar data:', error);
+          return null;
+        });
+    }
+
+    const api_key = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'; // replace with your API key
+    const price_drop_threshold = 0.2; // e.g., 20% drop in price
+    const price_rise_threshold = 0.2; // e.g., 20% rise in price
+    const margin_change_threshold = 0.2;
+
+    let old_prices_sell = {};
+    let old_prices_buy = {};
+    let price_drop_list = [];
+
+    setInterval(() => {
+      get_bazaar_data(api_key).then(bazaar_data => {
+        if (!bazaar_data) {
+          return;
+        }
+        for (const [product_id, product_data] of Object.entries(bazaar_data.products)) {
+          if (!product_data.sell_summary || !product_data.buy_summary) {
+            continue;
+          }
+          sell_price = product_data.sell_summary[0].pricePerUnit;
+          buy_price = product_data.buy_summary[0].pricePerUnit;
+          const ratio = Math.round(buy_price - sell_price, 1);
+          old_price_sell = old_prices_sell[product_id];
+          old_price_buy = old_prices_buy[product_id];
+          if (old_price_sell && old_price_buy && buy_price && sell_price) {
+            if (old_price_sell && sell_price < old_price_sell * (1 - price_drop_threshold) && !price_drop_list.some(([id]) => id === product_id)) {
+              const percent = Math.round(100 * (sell_price / old_price_sell), 0);
+              console.log(`The sell price of ${product_id} has dropped significantly with a sell and buy price of $${sell_price} and $${buy_price}. The percent change was ${percent}% of the previous price.`);
+              price_drop_list.push([product_id, old_price_sell]);
+            } else if (old_price_buy && buy_price > old_price_buy * (1 + price_rise_threshold)) {
+              const percent = Math.round(100 * (buy_price / old_price_buy), 0) - 1;
+              console.log(`The buy price of ${product_id} has skyrocketed with a sell and buy price of $${sell_price} and $${buy_price}. The percent change was ${percent}% from the previous price.`);
+            } else if (buy_price / sell_price > old_price_buy / old_price_sell && (buy_price / sell_price) / (old_price_buy / old_price_sell) > 1 + margin_change_threshold) {
+              const percent = Math.round(100 * ((buy_price / sell_price) / (old_price_buy / old_price_sell)), 5) - 1;
+              console.log(`The bazaar flipping margin for ${product_id} has increased by ${percent}%. The flipping margin is ${Math.round(buy_price / sell_price, 3)}X with an item cost of $${sell_price}.`);
+            }
+          }
+          old_prices_sell[product_id] = sell_price;
+          old_prices_buy[product_id] = buy_price;
+        }
+        for (const [dropped_product_id, original_price] of price_drop_list) {
+          const current_product_data = bazaar_data.products[dropped_product_id];
+          if (current_product_data && current_product_data.sell_summary && current_product_data.sell_summary[0].pricePerUnit >= original_price) {
+            console.log(`The sell price of ${dropped_product_id} has returned to its normal price of ${original_price}.`);
+            price_drop_list.splice(price_drop_list.findIndex(([id]) => id === dropped_product_id), 1);
+          }
+        }
+      });
+    }, 5000);
+    </script>
+ 
 
   </body>
 </html>
