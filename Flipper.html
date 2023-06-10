@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -102,19 +102,25 @@
 
   <div id="PriceDrops" class="tabcontent">
     <p id="priceDrops"></p>
+    <p> price drops go here</p>
   </div>
 
   <div id="PriceRises" class="tabcontent">
     <p id="priceRises"></p>
+    <p> price rises go here</p>
   </div>
 
   <div id="NewFlips" class="tabcontent">
     <p id="newFlips"></p>
+    <p> new flips go here</p>
   </div>
 
   <div id="BestFlips" class="tabcontent">
     <p id="bestFlips"></p>
+    <p> best flips go here</p>
   </div>
+  
+  
   
   <script>
     function sleep(ms) {
@@ -159,106 +165,7 @@
 
       setTimeout(typeWriter, typingSpeed);
     }
-
-    sleep(1000).then(typeWriter);
-
-    const apiKey = '44ca8f38-f280-4efa-ac7a-865e774571d0'; // Replace with your actual API key from Hypixel
-    const priceDropThreshold = 0.2;
-    const priceRiseThreshold = 0.2;
-    const marginChangeThreshold = 0.2;
-
-    let oldPricesSell = {};
-    let oldPricesBuy = {};
-
-    const tabContentHistory = {
-      'PriceDrops': '',
-      'PriceRises': '',
-      'NewFlips': '',
-      'BestFlips': ''
-    };
-
-    async function getBazaarData(apiKey) {
-      const base_url = 'https://api.hypixel.net';
-      const endpoint = '/skyblock/bazaar';
-      try {
-        const response = await fetch(`${base_url}${endpoint}?key=${apiKey}`);
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('Error fetching bazaar data:', error);
-        throw new Error('Failed to fetch bazaar data');
-      }
-    }
-
-    async function updateDisplay(tabName, message) {
-      const element = document.getElementById(tabName);
-      const paragraph = document.createElement('p');
-      paragraph.innerHTML = message;
-      element.appendChild(paragraph);
-    }
-
-    async function monitorBazaar() {
-      try {
-        const bazaarData = await getBazaarData(apiKey);
-        if (!bazaarData || !bazaarData.products) {
-          return;
-        }
-
-        for (const product_id in bazaarData.products) {
-          const productData = bazaarData.products[product_id];
-          const sellSummary = productData.sell_summary;
-          const buySummary = productData.buy_summary;
-
-          if (!sellSummary || !buySummary) {
-            continue;
-          }
-
-          const sellPrice = sellSummary[0].pricePerUnit;
-          const buyPrice = buySummary[0].pricePerUnit;
-
-          const oldPriceSell = oldPricesSell[product_id];
-          const oldPriceBuy = oldPricesBuy[product_id];
-
-          if (oldPriceSell && sellPrice < oldPriceSell * (1 - priceDropThreshold)) {
-            const percent = Math.round(100 * (sellPrice / oldPriceSell - 1));
-            const message = `The sell price of ${product_id} has dropped significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
-
-            if (!tabContentHistory['PriceDrops'].includes(message)) {
-              tabContentHistory['PriceDrops'] += message + '<br>';
-              updateDisplay('PriceDrops', message);
-            }
-          }
-          
-          if (oldPriceBuy && buyPrice > oldPriceBuy * (1 + priceRiseThreshold)) {
-            const percent = Math.round(100 * (buyPrice / oldPriceBuy - 1));
-            const message = `The buy price of ${product_id} has increased significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
-
-            if (!tabContentHistory['PriceRises'].includes(message)) {
-              tabContentHistory['PriceRises'] += message + '<br>';
-              updateDisplay('PriceRises', message);
-            }
-          }
-          
-          if (oldPriceSell && oldPriceBuy && Math.abs(sellPrice - buyPrice) > oldPriceSell * marginChangeThreshold) {
-            const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
-            const message = `The difference between the sell and buy prices of ${product_id} has changed significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Margin Change: ${percent}%.`;
-
-            if (!tabContentHistory['NewFlips'].includes(message)) {
-              tabContentHistory['NewFlips'] += message + '<br>';
-              updateDisplay('NewFlips', message);
-            }
-          }
-
-          oldPricesSell[product_id] = sellPrice;
-          oldPricesBuy[product_id] = buyPrice;
-        }
-      } catch (error) {
-        console.error('Error monitoring bazaar:', error);
-      }
-    }
-
-    setInterval(monitorBazaar, 5000);
-  </script>
+  <script>
   <script>
 
     function openTab(evt, tabName) {
