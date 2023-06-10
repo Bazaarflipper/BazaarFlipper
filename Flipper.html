@@ -13,7 +13,7 @@
       font-family: 'Courier New', monospace;
       text-align: center;
       font-size: 20px;
-      background-image: repeating-radial-gradient(45deg, #00ff38, #00b52b);
+      background-image: repeating-linear-gradient(45deg, #00ff38, #00b52b);
       background-size: 200% 200%;
       animation: gradientAnimation 10s ease infinite;
     }
@@ -188,9 +188,11 @@
       }
     }
 
-    function updateDisplay(tabName, message) {
+    async function updateDisplay(tabName, message) {
       const element = document.getElementById(tabName);
-      element.innerHTML = message;
+      const paragraph = document.createElement('p');
+      paragraph.innerHTML = message;
+      element.appendChild(paragraph);
     }
 
     async function monitorBazaar() {
@@ -219,9 +221,9 @@
             const percent = Math.round(100 * (sellPrice / oldPriceSell - 1));
             const message = `The sell price of ${product_id} has dropped significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
 
-            if (message !== tabContentHistory['Price Drops']) {
+            if (!tabContentHistory['Price Drops'].includes(message)) {
               updateDisplay('Price Drops', message);
-              tabContentHistory['Price Drops'] = message;
+              tabContentHistory['Price Drops'] += message + '<br>';
             }
           }
           
@@ -229,9 +231,9 @@
             const percent = Math.round(100 * (buyPrice / oldPriceBuy - 1));
             const message = `The buy price of ${product_id} has increased significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Percent Change: ${percent}%.`;
 
-            if (message !== tabContentHistory['Price Rises']) {
+            if (!tabContentHistory['Price Rises'].includes(message)) {
               updateDisplay('Price Rises', message);
-              tabContentHistory['Price Rises'] = message;
+              tabContentHistory['Price Rises'] += message + '<br>';
             }
           }
           
@@ -239,9 +241,9 @@
             const percent = Math.round(100 * Math.abs(sellPrice - buyPrice) / oldPriceSell);
             const message = `The difference between the sell and buy prices of ${product_id} has changed significantly. Sell Price: ${sellPrice}, Buy Price: ${buyPrice}, Margin Change: ${percent}%.`;
 
-            if (message !== tabContentHistory['New Flips']) {
+            if (!tabContentHistory['New Flips'].includes(message)) {
               updateDisplay('New Flips', message);
-              tabContentHistory['New Flips'] = message;
+              tabContentHistory['New Flips'] += message + '<br>';
             }
           }
 
