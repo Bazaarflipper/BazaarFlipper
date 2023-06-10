@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -204,89 +204,90 @@
       return data;
     }
 
-     async function fetchData() {
-      try {
-        let bazaar_data = await get_bazaar_data(api_key);
+async function fetchData() {
+  try {
+    let bazaar_data = await get_bazaar_data(api_key);
 
-        if (!bazaar_data.success) {
-          console.log("Data fetching was not successful");
-          return;
-        }
+    if (!bazaar_data.success) {
+      console.log("Data fetching was not successful");
+      return;
+    }
 
-        if (!bazaar_data.products) {
-          console.log("No products data in the response");
-          return;
-        }
+    if (!bazaar_data.products) {
+      console.log("No products data in the response");
+      return;
+    }
 
-        let new_prices_sell = {};
-        let new_prices_buy = {};
-        let price_rise_list = [];
-        let price_drop_list = [];
+    let new_prices_sell = {};
+    let new_prices_buy = {};
+    let price_rise_list = [];
+    let price_drop_list = [];
 
-        for (let product of Object.values(bazaar_data.products)) {
-          let sell_price = product.sell_summary[0].pricePerUnit;
-          let buy_price = product.buy_summary[0].pricePerUnit;
-          let product_id = product.productId;
+    for (let product of Object.values(bazaar_data.products)) {
+      // check if sell_summary and buy_summary are present and are not empty
+      if (product.sell_summary && product.sell_summary.length > 0 && product.buy_summary && product.buy_summary.length > 0) {
+        let sell_price = product.sell_summary[0].pricePerUnit;
+        let buy_price = product.buy_summary[0].pricePerUnit;
+        let product_id = product.productId;
 
-          new_prices_sell[product_id] = sell_price;
-          new_prices_buy[product_id] = buy_price;
+        new_prices_sell[product_id] = sell_price;
+        new_prices_buy[product_id] = buy_price;
 
-          let old_sell_price = old_prices_sell[product_id];
-          let old_buy_price = old_prices_buy[product_id];
+        let old_sell_price = old_prices_sell[product_id];
+        let old_buy_price = old_prices_buy[product_id];
 
-          if (old_sell_price !== undefined) {
-            if (sell_price / old_sell_price - 1 > price_rise_threshold) {
-              price_rise_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
-            } else if (old_sell_price / sell_price - 1 > price_drop_threshold) {
-              price_drop_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
-            }
-          }
-
-          if (old_buy_price !== undefined) {
-            if (buy_price / old_buy_price - 1 > price_rise_threshold) {
-              price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-            } else if (old_buy_price / buy_price - 1 > price_drop_threshold) {
-              price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
-            }  } catch (error) {
-    console.error("An error occurred during fetching the data: ", error);
-
+        if (old_sell_price !== undefined) {
+          if (sell_price / old_sell_price - 1 > price_rise_threshold) {
+            price_rise_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
+          } else if (old_sell_price / sell_price - 1 > price_drop_threshold) {
+            price_drop_list.push({product: product_id, old_price: old_sell_price, new_price: sell_price});
           }
         }
 
-        old_prices_sell = new_prices_sell;
-        old_prices_buy = new_prices_buy;
-
-        let priceDropsDiv = document.getElementById('priceDropsDiv');
-        let priceRisesDiv = document.getElementById('priceRisesDiv');
-
-        priceDropsDiv.innerHTML = '';
-        priceRisesDiv.innerHTML = '';
-
-        for (let item of price_drop_list) {
-          let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
-          priceDropsDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has dropped by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
+        if (old_buy_price !== undefined) {
+          if (buy_price / old_buy_price - 1 > price_rise_threshold) {
+            price_rise_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
+          } else if (old_buy_price / buy_price - 1 > price_drop_threshold) {
+            price_drop_list.push({product: product_id, old_price: old_buy_price, new_price: buy_price});
+          }
         }
-
-        for (let item of price_rise_list) {
-          let percentage = ((item.new_price - item.old_price) / item.old_price * 100).toFixed(2);
-          priceRisesDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has risen by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
-        }
-
-        // If there are any price changes, make sure the parent divs are visible
-        if (price_drop_list.length > 0) {
-          document.getElementById('PriceDrops').style.display = 'block';
-        }
-        if (price_rise_list.length > 0) {
-          document.getElementById('PriceRises').style.display = 'block';
-        }
-
-      } catch (error) {
-        console.error("An error occurred during fetching the data: ", error);
       }
     }
 
-    fetchData();
-    setInterval(fetchData, 500);
+    old_prices_sell = new_prices_sell;
+    old_prices_buy = new_prices_buy;
+
+    let priceDropsDiv = document.getElementById('priceDropsDiv');
+    let priceRisesDiv = document.getElementById('priceRisesDiv');
+
+    priceDropsDiv.innerHTML = '';
+    priceRisesDiv.innerHTML = '';
+
+    for (let item of price_drop_list) {
+      let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
+      priceDropsDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has dropped by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
+    }
+
+    for (let item of price_rise_list) {
+      let percentage = ((item.new_price - item.old_price) / item.old_price * 100).toFixed(2);
+      priceRisesDiv.insertAdjacentHTML('afterbegin', `<p>The price of ${item.product} has risen by ${percentage}% and is now ${item.new_price.toFixed(2)}</p>`);
+    }
+
+    // If there are any price changes, make sure the parent divs are visible
+    if (price_drop_list.length > 0) {
+      document.getElementById('PriceDrops').style.display = 'block';
+    }
+    if (price_rise_list.length > 0) {
+      document.getElementById('PriceRises').style.display = 'block';
+    }
+
+  } catch (error) {
+    console.error("An error occurred during fetching the data: ", error);
+  }
+}
+
+fetchData();
+setInterval(fetchData, 500);
     // Initialize the tab
     document.getElementById("defaultOpen").click();
   </script>
