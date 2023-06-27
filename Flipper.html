@@ -167,78 +167,95 @@
     }
   </script>
   <script>
-    async function fetchPrices(api_key) {
-      try {
-        let base_url = 'https://api.hypixel.net';
-        let endpoint = '/skyblock/bazaar';
-        let headers = {
-          'Accept': 'application/json',
+    `var requests = require('requests');
+    var json = require('json');
+    
+    old_price_buy = 1;
+    old_price_sell = 1;
+    buy_price = 1;
+    sell_price = 1;
+    
+    function get_bazaar_data(api_key) {
+        base_url = 'https://api.hypixel.net';
+        endpoint = '/skyblock/bazaar';
+        headers = {
+            'Accept': 'application/json',
         };
-        let params = new URLSearchParams({
-          'key': api_key
-        });
-        let response = await fetch(base_url + endpoint + '?' + params.toString(), {headers});
-        let data = await response.json();
+        params = {
+            'key': api_key,
+        };
+        response = requests.get(base_url + endpoint, headers=headers, params=params);
+        try {
+            data = response.json();
+        } catch ( json.JSONDecodeError) {
+            console.log('Error decoding JSON response. The response might be too large or the API might be experiencing issues.');
+            return null;
         return data;
-      } catch (error) {
-        console.error("An error occurred during the fetch request: ", error);
-        return null;
-      }
-    }
-
-    let api_key = '702f98df-b74f-4d4d-a9dc-f8b89ff850e4';
-    let price_drop_threshold = 0.2;
-    let price_rise_threshold = 0.2;
-    let margin_change_threshold = 0.2;
-    let old_prices_sell = {};
-    let old_prices_buy = {};
-
-    async function fetchData() {
-      let bazaar_data = await fetchPrices(api_key);
-      let price_drop_list = [];
-      let price_rise_list = [];
-      
-      if (bazaar_data === null || !bazaar_data.success) {
-        console.log("An error occurred during the fetch request");
-        return;
-      }
-
-      for (let product in bazaar_data.products) {
-        let sell_summary = bazaar_data.products[product].sell_summary;
-        let buy_summary = bazaar_data.products[product].buy_summary;
-
-        if (sell_summary.length > 0 && buy_summary.length > 0) {
-          let new_sell_price = sell_summary[0].pricePerUnit;
-          let new_buy_price = buy_summary[0].pricePerUnit;
-
-          let old_sell_price = old_prices_sell[product];
-          let old_buy_price = old_prices_buy[product];
-
-          if (old_sell_price && ((old_sell_price - new_sell_price) / old_sell_price >= price_drop_threshold)) {
-            price_drop_list.push([product, new_sell_price]);
-          }
-
-          if (old_buy_price && ((new_buy_price - old_buy_price) / old_buy_price >= price_rise_threshold)) {
-            price_rise_list.push([product, new_buy_price]);
-          }
-
-          old_prices_sell[product] = new_sell_price;
-          old_prices_buy[product] = new_buy_price;
         }
-      }
-
-      if (price_drop_list.length > 0) {
-        document.getElementById('PriceDrops').innerHTML = price_drop_list.map(item => `${item[0]}: ${item[1]}`).join("<br/>");
-      }
-
-      if (price_rise_list.length > 0) {
-        document.getElementById('PriceRises').innerHTML = price_rise_list.map(item => `${item[0]}: ${item[1]}`).join("<br/>");
-      }
+    api_key = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a'  // replace with your API key
+    price_drop_threshold = 0.2  // e.g., 20% drop in price
+    price_rise_threshold = 0.2  // e.g., 20% rise in price
+    margin_change_threshold = 0.2;
     }
-
-    fetchData(); // initial call
-    setInterval(fetchData, 5000); // subsequent calls every 5 seconds
-
+    old_prices_sell = {};
+    old_prices_buy = {};
+    price_drop_list = [];
+    
+    while (true) {
+        bazaar_data = get_bazaar_data(api_key);
+        if (bazaar_data === null) {
+            continue;
+    
+        for (product_id, product_data in bazaar_data['products'].items()) {
+            if (!product_data['sell_summary'] || !product_data['buy_summary']) {
+                continue;
+    
+            sell_price = product_data['sell_summary'][0]['pricePerUnit'];
+            buy_price = product_data['buy_summary'][0]['pricePerUnit'];
+            ratio = round(buy_price - sell_price, 1);
+    
+            old_price_sell = old_prices_sell.get(product_id);
+            old_price_buy = old_prices_buy.get(product_id);
+    
+            if (old_price_sell && old_price_buy && buy_price && sell_price) {
+                if (old_price_sell && sell_price < old_price_sell * (1 - price_drop_threshold) && product_id !in [i[0] for (i in price_drop_list]) {
+                    percent = Number(round(100 * (sell_price / old_price_sell), 0));
+                    console.log(f'The sell price of {product_id} has dropped significantly with a sell and buy price of ${sell_price} and ${buy_price}. The percent change was {percent}% of the previous price.');
+                    price_drop_list.push((product_id, old_price_sell));
+    
+                } else if (old_price_buy && buy_price > old_price_buy * (1 + price_rise_threshold) {
+                    percent = Number(round(100 * (buy_price / old_price_buy), 0)) - 1;
+                    console.log(f'The buy price of {product_id} has skyrocketed with a sell and buy price of ${sell_price} and ${buy_price}. The percent change was {percent}% from the previous price.');
+    
+                } else if (buy_price / sell_price > old_price_buy / old_price_sell && (buy_price / sell_price) / (old_price_buy / old_price_sell) > 1 + margin_change_threshold) {
+                    percent = Number(round(100 * ((buy_price / sell_price) / (old_price_buy / old_price_sell)), 5)) - 1;
+                    console.log(f'The bazaar flipping margin for {product_id} has increased by {percent}%. The flipping margin is {int(round(buy_price / sell_price, 3))}X with an item cost of ${sell_price}.');
+    
+                for (dropped_product_id, original_price in price_drop_list[:]) {
+                    current_product_data = bazaar_data['products'].get(dropped_product_id);
+                    if (current_product_data && current_product_data['sell_summary'] && current_product_data['sell_summary'][0]['pricePerUnit'] >= original_price) {
+                        console.log(f'The sell price of {dropped_product_id} has returned to its normal price of {original_price}.');
+                        price_drop_list.remove((dropped_product_id, original_price));
+    
+            old_prices_sell[product_id] = sell_price;
+            old_prices_buy[product_id] = buy_price;
+                    }
+                }
+    
+                }
+    
+    ) {;
+    
+                }
+            }
+    
+            }
+    
+        }
+    
+        }
+    
+    }`
   </script>
 </body>
 </html>
