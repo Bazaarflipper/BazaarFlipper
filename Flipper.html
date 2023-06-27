@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -83,6 +83,7 @@
 <body>
   <h1>Best tracker for <span id="typing-text"></span></h1>
 
+
   <button class="tablink" id="defaultOpen" onclick="openTab(event, 'PriceDrops')">Price Drops</button>
   <button class="tablink" onclick="openTab(event, 'PriceRises')">Price Rises</button>
   <button class="tablink" onclick="openTab(event, 'NewFlips')">New Flips</button>
@@ -136,7 +137,7 @@
         await sleep(500);
       }
 
-      if (isDeleting && textLength === 0) {
+      if (isDeleting && textLength === 0) {aa
         isDeleting = false;
         currentIndex = (currentIndex + 1) % strings.length;
         currentString = strings[currentIndex];
@@ -166,15 +167,7 @@
     }
   </script>
   <script>
-    let api_key = '702f98df-b74f-4d4d-a9dc-f8b89ff850e4';
-    let price_drop_threshold = 0.2;
-    let price_rise_threshold = 0.2;
-    let margin_change_threshold = 0.2;
-    let old_prices_sell = {};
-    let old_prices_buy = {};
-    let price_drop_list = [];
-
-    async function get_bazaar_data(api_key) {
+    async function fetchPrices(api_key) {
       try {
         let base_url = 'https://api.hypixel.net';
         let endpoint = '/skyblock/bazaar';
@@ -193,95 +186,55 @@
       }
     }
 
-async function fetchData() {
-  try {
-    let bazaar_data = await get_bazaar_data(api_key);
+    let api_key = '702f98df-b74f-4d4d-a9dc-f8b89ff850e4';
+    let price_drop_threshold = 0.2;
+    let price_rise_threshold = 0.2;
+    let margin_change_threshold = 0.2;
+    let old_prices_sell = {};
+    let old_prices_buy = {};
 
-    if (bazaar_data === null) {
-      console.log("An error occurred during the fetch request");
-      return;
-    }
+    async function fetchData() {
+      let bazaar_data = await fetchPrices(api_key);
+      let price_drop_list = [];
+      let price_rise_list = [];
+      
+      if (bazaar_data === null || !bazaar_data.success) {
+        console.log("An error occurred during the fetch request");
+        return;
+      }
 
-    if (!bazaar_data.success) {
-      console.log("Data fetching was not successful");
-      return;
-    }
+      for (let product in bazaar_data.products) {
+        let sell_summary = bazaar_data.products[product].sell_summary;
+        let buy_summary = bazaar_data.products[product].buy_summary;
 
-    if (!bazaar_data.products) {
-      console.log("No products data in the response");
-      return;
-    }
+        if (sell_summary.length > 0 && buy_summary.length > 0) {
+          let new_sell_price = sell_summary[0].pricePerUnit;
+          let new_buy_price = buy_summary[0].pricePerUnit;
 
-    let new_prices_sell = {};
-    let new_prices_buy = [];
-    let price_rise_list = [];
-    let price_drop_list = [];
+          let old_sell_price = old_prices_sell[product];
+          let old_buy_price = old_prices_buy[product];
 
-    for (let product of Object.values(bazaar_data.products)) {
-      if (product.sell_summary.length > 0 && product.buy_summary.length > 0) {
-        let sell_price = product.sell_summary[0].pricePerUnit;
-        let buy_price = product.buy_summary[0].pricePerUnit;
-        let product_id = product.productId;
-
-        new_prices_sell[product_id] = sell_price;
-        new_prices_buy[product_id] = buy_price;
-
-        let old_sell_price = old_prices_sell[product_id];
-        let old_buy_price = old_prices_buy[product_id];
-
-        if (old_sell_price !== undefined) {
-          let sell_price_ratio = sell_price / old_sell_price;
-          if (1 - sell_price_ratio > price_drop_threshold) {
-            price_drop_list.push({ product: product_id, old_price: old_sell_price, new_price: sell_price });
+          if (old_sell_price && ((old_sell_price - new_sell_price) / old_sell_price >= price_drop_threshold)) {
+            price_drop_list.push([product, new_sell_price]);
           }
-        }
 
-        if (old_buy_price !== undefined) {
-          let buy_price_ratio = buy_price / old_buy_price;
-          if (1 - buy_price_ratio > price_drop_threshold) {
-            price_drop_list.push({ product: product_id, old_price: old_buy_price, new_price: buy_price });
+          if (old_buy_price && ((new_buy_price - old_buy_price) / old_buy_price >= price_rise_threshold)) {
+            price_rise_list.push([product, new_buy_price]);
           }
-        }
 
-        if (old_sell_price !== undefined && old_buy_price !== undefined) {
-          let margin_change_ratio = Math.abs((sell_price - buy_price) / (old_sell_price - old_buy_price));
-          if (margin_change_ratio > margin_change_threshold) {
-            if (sell_price > old_sell_price) {
-              price_rise_list.push({ product: product_id, old_price: old_sell_price, new_price: sell_price });
-            } else if (sell_price < old_sell_price) {
-              price_drop_list.push({ product: product_id, old_price: old_sell_price, new_price: sell_price });
-            }
-          }
+          old_prices_sell[product] = new_sell_price;
+          old_prices_buy[product] = new_buy_price;
         }
       }
+
+      if (price_drop_list.length > 0) {
+        document.getElementById('PriceDrops').innerHTML = price_drop_list.map(item => `${item[0]}: ${item[1]}`).join("<br/>");
+      }
+
+      if (price_rise_list.length > 0) {
+        document.getElementById('PriceRises').innerHTML = price_rise_list.map(item => `${item[0]}: ${item[1]}`).join("<br/>");
+      }
     }
-
-    old_prices_sell = new_prices_sell;
-    old_prices_buy = new_prices_buy;
-
-    let priceDropsDiv = document.getElementById('priceDropsDiv');
-    let priceRisesDiv = document.getElementById('priceRisesDiv');
-
-    priceDropsDiv.innerHTML = '';
-    priceRisesDiv.innerHTML = '';
-
-    for (let item of price_drop_list) {
-      let percentage = ((item.old_price - item.new_price) / item.old_price * 100).toFixed(2);
-      let text = `<p>${item.product}: price dropped from ${item.old_price.toFixed(2)} to ${item.new_price.toFixed(2)} (-${percentage}%)</p>`;
-      priceDropsDiv.innerHTML += text;
-    }
-
-    for (let item of price_rise_list) {
-      let percentage = ((item.new_price - item.old_price) / item.old_price * 100).toFixed(2);
-      let text = `<p>${item.product}: price rose from ${item.old_price.toFixed(2)} to ${item.new_price.toFixed(2)} (+${percentage}%)</p>`;
-      priceRisesDiv.innerHTML += text;
-    }
-
-  } catch (error) {
-    console.error("An error occurred: ", error);
-  }
-}
-
 
     fetchData(); // initial call
     setInterval(fetchData, 5000); // subsequent calls every 5 seconds
