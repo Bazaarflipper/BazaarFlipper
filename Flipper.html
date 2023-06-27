@@ -149,7 +149,10 @@
       setTimeout(typeWriter, typingSpeed);
     }
 
-    sleep(1000).then(typeWriter);
+    while (true) {
+      sleep(1000).then(typeWriter);
+    }
+    
   </script>
   <script>
     function openTab(evt, tabName) {
@@ -255,7 +258,7 @@
     
         }
     
-    }`
+    }
   </script>
 </body>
 </html>
