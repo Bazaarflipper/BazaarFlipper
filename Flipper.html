@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -24,7 +24,8 @@
       font-weight: bold; 
     }
     
-    .tablink {
+       .tablink {
+      position: relative;
       border-radius: 50px;
       font-family: 'Ika Compact VAR', fantasy;
       font-size: 20px;
@@ -34,18 +35,40 @@
       width: calc(20% - 10px);
       margin: 5px;
       background-image: linear-gradient(45deg, #3a85ea, #A44EFF);
-      text-align: center; 
-      transition: background-image .3s ease;
+      text-align: center;
+      overflow: hidden;
     }
-    .tablink.active {
+    
+    .tablink::before,
+    .tablink::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: 100% 100%;
+      transition: opacity 0.3s ease;
+    }
+    
+    .tablink::before {
       background-image: linear-gradient(45deg, #36C3F8, #08475E);
-      transition: background-image .5s ease;
+      opacity: 0;
+    }
+    
+    .tablink::after {
+      background-image: linear-gradient(45deg, #1f0247, #7411ff);
+      opacity: 0;
+    }
+    
+    .tablink.active::before {
+      opacity: 1;
+    }
+    
+    .tablink:hover::after {
+      opacity: 1;
     }
 
-    .tablink:hover {
-      background-image: linear-gradient(45deg, #1f0247, #7411ff);
-      transition: background-image .3s ease;
-    }
 
     .tabcontent {
       color: black;
