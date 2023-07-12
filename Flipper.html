@@ -17,6 +17,46 @@
       background-size: 100% 100%;
       background-repeat: no-repeat;
     }
+    .text-container1 {
+      background-color: #fff;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0px 0px 15px 5px rgba(58,133,234,0.75);  /* blue glow */
+      transition: all 0.3s ease;
+      overflow: auto;
+    }
+
+    .text-container2 {
+      background-color: #fff;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0px 0px 15px 5px rgba(255,87,51,0.75);  /* orange glow */
+      transition: all 0.3s ease;
+      overflow: auto;
+    }
+
+    .text-container3 {
+      background-color: #fff;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0px 0px 15px 5px rgba(88,24,69,0.75);  /* purple glow */
+      transition: all 0.3s ease;
+      overflow: auto;
+    }
+
+    .text-container4 {
+      background-color: #fff;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0px 0px 15px 5px rgba(255,195,0,0.75);  /* yellow glow */
+      transition: all 0.3s ease;
+      overflow: auto;
+    }
+
     
     h1 {
       font-size: 70px;
@@ -95,6 +135,19 @@
       margin-left: 2px;
       animation: blink 1s infinite;
     }
+    .text-container {
+      background-color: #fff;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 25px;
+      box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.75);
+      transition: all 0.3s ease;
+      overflow: auto;
+    }
+    .tablink1 { background-image: linear-gradient(45deg, #3a85ea, #A44EFF); }
+    .tablink2 { background-image: linear-gradient(45deg, #FF5733, #C70039); }
+    .tablink3 { background-image: linear-gradient(45deg, #581845, #900C3F); }
+    .tablink4 { background-image: linear-gradient(45deg, #FFC300, #FF5733); }
 
     @keyframes blink {
       50% { opacity: 0; }
@@ -102,28 +155,29 @@
   </style>
 </head>
 <body>
-  <h1>Best tracker for <span id="typing-text"></span></h1>
+    <h1>Best tracker for <span id="typing-text"></span></h1>
 
-  <button class="tablink" id="defaultOpen" onclick="openTab(event, 'PriceDrops')"><span>Price Drops</span></button>
-  <button class="tablink" onclick="openTab(event, 'PriceRises')"><span>Price Rises</span></button>
-  <button class="tablink" onclick="openTab(event, 'NewFlips')"><span>New Flips</span></button>
-  <button class="tablink" onclick="openTab(event, 'BestFlips')"><span>Best Flips</span></button>
+  <button class="tablink tablink1" id="defaultOpen" onclick="openTab(event, 'PriceDrops')"><span>Price Drops</span></button>
+  <button class="tablink tablink2" onclick="openTab(event, 'PriceRises')"><span>Price Rises</span></button>
+  <button class="tablink tablink3" onclick="openTab(event, 'NewFlips')"><span>New Flips</span></button>
+  <button class="tablink tablink4" onclick="openTab(event, 'BestFlips')"><span>Best Flips</span></button>
 
   <div id="PriceDrops" class="tabcontent">
-    <div id="priceDropsDiv"></div>
+    <div id="priceDropsDiv" class="text-container"></div>
   </div>
 
   <div id="PriceRises" class="tabcontent">
-    <div id="priceRisesDiv"></div>
+    <div id="priceRisesDiv" class="text-container"></div>
   </div>
 
   <div id="NewFlips" class="tabcontent">
-    <div id="newFlipsDiv"></div>
+    <div id="newFlipsDiv" class="text-container"></div>
   </div>
 
   <div id="BestFlips" class="tabcontent">
-    <div id="bestFlipsDiv"></div>
+    <div id="bestFlipsDiv" class="text-container"></div>
   </div>
+  
   
   <script>
     function sleep(ms) {
@@ -172,21 +226,6 @@
     }  
     sleep(1000).then(typeWriter);
     
-  </script>
-  <script>
-    function openTab(evt, tabName) {
-      var i, tabContent, tabLinks;
-      tabContent = document.getElementsByClassName("tabcontent");
-      for (i = 0; i < tabContent.length; i++) {
-        tabContent[i].style.display = "none";
-      }
-      tabLinks = document.getElementsByClassName("tablink");
-      for (i = 0; i < tabLinks.length; i++) {
-        tabLinks[i].className = tabLinks[i].className.replace(" active", "");
-      }
-      document.getElementById(tabName).style.display = "block";
-      evt.currentTarget.className += " active";
-    }
   </script>
   <script>
   let old_price_buy = 1
