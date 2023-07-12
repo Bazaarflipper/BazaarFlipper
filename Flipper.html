@@ -212,6 +212,7 @@
 
   setInterval(async function() {
       let bazaar_data = await get_bazaar_data(api_key)
+      console.log(response);
       if (!bazaar_data) return
       
       for (let product_id in bazaar_data['products']) {
