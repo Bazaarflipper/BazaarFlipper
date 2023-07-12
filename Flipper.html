@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -196,12 +196,12 @@
   let old_prices_sell = {}
   let old_prices_buy = {}
   let price_drop_list = []
-
+  
   let api_key = '6a8c4882-3ad8-4136-a81d-51ecb1244f7a' // replace with your API key
   let price_drop_threshold = 0.2 // e.g., 20% drop in price
   let price_rise_threshold = 0.2 // e.g., 20% rise in price
   let margin_change_threshold = 0.2
-
+  
   async function get_bazaar_data(api_key) {
       let base_url = 'https://api.hypixel.net'
       let endpoint = '/skyblock/bazaar'
@@ -209,23 +209,22 @@
       let data = await response.json()
       return data
   }
-
+  
   setInterval(async function() {
       let bazaar_data = await get_bazaar_data(api_key)
-      console.log(response);
       if (!bazaar_data) return
-      
+  
       for (let product_id in bazaar_data['products']) {
           let product_data = bazaar_data['products'][product_id]
-          if (!product_data['sell_summary'] || !product_data['buy_summary']) continue
-          
+          if (!product_data['sell_summary'] || !product_data['buy_summary'] || product_data['sell_summary'].length === 0 || product_data['buy_summary'].length === 0) continue
+  
           sell_price = product_data['sell_summary'][0]['pricePerUnit']
           buy_price = product_data['buy_summary'][0]['pricePerUnit']
           let ratio = Math.round(buy_price - sell_price, 1)
-          
+  
           old_price_sell = old_prices_sell[product_id]
           old_price_buy = old_prices_buy[product_id]
-          
+  
           if (old_price_sell && old_price_buy && buy_price && sell_price) {
               if (old_price_sell && sell_price < old_price_sell * (1 - price_drop_threshold) && !price_drop_list.some(i => i[0] === product_id)) {
                   let percent = Math.round(100 * (sell_price / old_price_sell), 0)
@@ -257,7 +256,8 @@
           old_prices_sell[product_id] = sell_price
           old_prices_buy[product_id] = buy_price
       }
-  }, 100) // 10000ms = 10s
+  }, 100); // Adjust the interval as necessary
+
   </script>
 </body>
 </html>
