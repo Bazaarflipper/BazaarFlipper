@@ -211,6 +211,7 @@
   }
   
   setInterval(async function() {
+      console.log("Function called");
       let bazaar_data = await get_bazaar_data(api_key)
       if (!bazaar_data) return
   
