@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flippe</title>
+  <title>Bazaar Flipper</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -56,30 +56,12 @@
       transition: all 0.3s ease;
       overflow: auto;
     }
-    
-    .container {
-      display: flex;
-      justify-content: space-between;
-    }
-    
-    .text-container {
-      width: 20%;
-      background-color: #fff;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 25px;
-      box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.75);
-      transition: all 0.3s ease;
-      overflow: auto;
-    }
-
 
     
     h1 {
       font-size: 70px;
       font-family: 'Courier New', monospace;
       font-weight: bold; 
-      
     }
     
       .tablink {
@@ -195,27 +177,7 @@
   <div id="BestFlips" class="tabcontent">
     <div id="bestFlipsDiv" class="text-container"></div>
   </div>
-
-
-  <div class="container">
-    
-  <div id="PriceDrops" class="tabcontent">
-    <div id="priceDropsDiv" class="text-container"></div>
-  </div>
-
-  <div id="PriceRises" class="tabcontent">
-    <div id="priceRisesDiv" class="text-container"></div>
-  </div>
-
-  <div id="NewFlips" class="tabcontent">
-    <div id="newFlipsDiv" class="text-container"></div>
-  </div>
-
-  <div id="BestFlips" class="tabcontent">
-    <div id="bestFlipsDiv" class="text-container"></div>
-  </div>
-</div>
-
+  
   
   <script>
     function sleep(ms) {
