@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Bazaar Flipper</title>
+  <title>Bazaar Flippe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
@@ -17,7 +17,13 @@
       background-size: 100% 100%;
       background-repeat: no-repeat;
     }
+    .tablink1 { background-image: linear-gradient(45deg, #3D6CE4, #7265D8); }
+    .tablink2 { background-image: linear-gradient(45deg, #7265D8, #915EC9); }
+    .tablink3 { background-image: linear-gradient(45deg, #915EC9, #A758BA); }
+    .tablink4 { background-image: linear-gradient(45deg, #A758BA, #B653A9); }
+    
     .text-container1 {
+      width: calc(20% - 10px);
       background-color: #fff;
       margin: 20px;
       padding: 20px;
@@ -28,6 +34,7 @@
     }
 
     .text-container2 {
+      width: calc(20% - 10px);
       background-color: #fff;
       margin: 20px;
       padding: 20px;
@@ -64,56 +71,56 @@
       font-weight: bold; 
     }
     
-      .tablink {
-  position: relative;
-  border-radius: 50px;
-  font-family: 'Ika Compact VAR', fantasy;
-  font-size: 20px;
-  border: none;
-  padding: 14px 16px;
-  color: black;
-  width: calc(20% - 10px);
-  margin: 5px;
-  background-image: linear-gradient(45deg, #3a85ea, #A44EFF);
-  text-align: center;
-  overflow: hidden;
-}
-
-.tablink span {
-  position: relative;
-  z-index: 1;
-}
-
-.tablink::before,
-.tablink::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: 100% 100%;
-  transition: opacity 0.3s ease;
-  z-index: 0;
-}
-
-.tablink::before {
-  background-image: linear-gradient(45deg, #36C3F8, #08475E);
-  opacity: 0;
-}
-
-.tablink::after {
-  background-image: linear-gradient(45deg, #1f0247, #7411ff);
-  opacity: 0;
-}
-
-.tablink.active::before {
-  opacity: 1;
-}
-
-.tablink:hover::after {
-  opacity: 1;
-}
+    .tablink {
+      position: relative;
+      border-radius: 50px;
+      font-family: 'Ika Compact VAR', fantasy;
+      font-size: 20px;
+      border: none;
+      padding: 14px 16px;
+      color: black;
+      width: calc(20% - 10px);
+      margin: 5px;
+      background-image: linear-gradient(45deg, #3a85ea, #A44EFF);
+      text-align: center;
+      overflow: hidden;
+    }
+    
+    .tablink span {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .tablink::before,
+    .tablink::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: 100% 100%;
+      transition: opacity 0.3s ease;
+      z-index: 0;
+    }
+    
+    .tablink::before {
+      background-image: linear-gradient(45deg, #36C3F8, #08475E);
+      opacity: 0;
+    }
+    
+    .tablink::after {
+      background-image: linear-gradient(45deg, #1f0247, #7411ff);
+      opacity: 0;
+    }
+    
+    .tablink.active::before {
+      opacity: 1;
+    }
+    
+    .tablink:hover::after {
+      opacity: 1;
+    }
 
     
     .column {
@@ -144,10 +151,6 @@
       transition: all 0.3s ease;
       overflow: auto;
     }
-    .tablink1 { background-image: linear-gradient(45deg, #3D6CE4, #7265D8); }
-    .tablink2 { background-image: linear-gradient(45deg, #7265D8, #915EC9); }
-    .tablink3 { background-image: linear-gradient(45deg, #915EC9, #A758BA); }
-    .tablink4 { background-image: linear-gradient(45deg, #A758BA, #B653A9); }
 
     @keyframes blink {
       50% { opacity: 0; }
